@@ -1,0 +1,17 @@
+# Ignore another repositories
+common
+deploy
+
+# Ignore temporary files
+*.o
+*.elf
+
+# Ignore old files
+*.old
+
+# Ignore this hidden directorys
+.ignore
+.trash
+
+# Ignore example files
+*.example
