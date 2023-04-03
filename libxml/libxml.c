@@ -1,4 +1,6 @@
 #include "libxml.h"
+#include <stdbool.h>
+#include <limits.h>
 
 /*********************************************************************************
  *                                 DECLARATIONS
@@ -11,6 +13,8 @@ long libxml_length (FILE * xml_file);
 char * libxml_read (FILE * xml_file, long xml_length);
 char * libxml_read_instruction (char * xml_txt);
 char * libxml_read_content (char * xml_txt);
+
+void libxml_parse_tag (char * content_txt, long position, xml_tag_t * tag_t);
 
 /*********************************************************************************
  *                                 FILE FUNCTIONS
@@ -99,7 +103,6 @@ char * libxml_read_instruction (char * xml_txt)
 	return instruction;
 }
 
-
 char * libxml_read_content (char * xml_txt)
 {
 	long next_inst;
@@ -121,53 +124,263 @@ char * libxml_read_content (char * xml_txt)
 	return xml_txt + inst_end + main_start;
 }
 
-typedef struct
-{
-	long tag_pos;
-	long tag_name;
-	long tag_length;
-	//bool atributes;
-	long tag_end;
-}xml_tag_data_t;
-
-long libxml_find_next_tag (char * xml_txt, long position)
+long libxml_find_next_tag (char * content_txt, long position)
 {
 	long content_length;
-		
-	content_length = libstring_length (xml_txt);
+	content_length = libstring_length (content_txt);
+	printf("\nLargo: %ld >> posicion: %ld", content_length, position);
 	
-	while ((xml_txt [position] != '<') && (position < content_length))
+	while ((content_txt [position] != '<') && (position < content_length))
 			position++;
 
-	if (position >= 0)
-		return position;
+	if ((position >= 0) && (position < content_length))
+		return position + 1;
 	else
 		return -1;
 }
 
+
+char * libxml_parse_tag_name (char * content_txt, long position)
+{
+	char * name = NULL;
+
+	long blank;
+	long bracket;
+	long slash;
+	long small = LONG_MAX;  // Maximum possible value for long
+
+	blank   = libstring_search (content_txt + position, " ");
+	bracket = libstring_search (content_txt + position, ">");
+	slash   = libstring_search (content_txt + position, "/>");
+/*
+	char subset [501];
+	libstring_subset (content_txt, position, 500, subset);
+	printf("\n\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+	printf("\n%s", subset);
+	printf("\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+*/
+	if ((blank > 0) && (blank < small))
+        small = blank;
+    
+    if ((bracket > 0) && (bracket < small))
+    	small = bracket;
+
+	if ((slash > 0) && (slash < small))
+        small = slash;
+
+	if ((small > 0) && (small < LONG_MAX))
+	{
+		name = (char *) malloc (small * sizeof (char));
+		libstring_subset (content_txt, position, small, name);
+	}
+	else
+		printf ("LIBXML: Error parsing tag name");
+
+	if (name != NULL)
+		printf ("\n1+++++++ %s ++++++++++ %ld", name, small);
+
+	return name;
+}
+
+char * libxml_parse_tag_value (char * content_txt, long position, char * name)
+{
+	char * value = NULL;
+	
+	long bracket;
+	long slash;
+
+	bracket = libstring_search (content_txt + position, ">");
+	slash   = libstring_search (content_txt + position, "/>");
+
+	if ((bracket < slash) || (slash < 0))
+	{
+		char * close;
+		close = (char *) malloc ((bracket + 3) * sizeof (char));
+
+		close[0] = '<';
+		close[1] = '/';
+		libstring_concat (close, name);
+		libstring_concat (close, ">");
+		
+		long pos = 0;
+		long next_tag;
+		pos = libstring_search (content_txt + position, close);
+		next_tag = libxml_find_next_tag (content_txt, position);
+
+		if (pos = next_tag)
+		{
+			value = (char *) malloc ((pos - position) * sizeof (char));
+			libstring_subset (content_txt, position + bracket + 1, pos - bracket, value);
+		}
+
+		free (close);
+		
+		if (value != NULL)
+			printf ("\n2+++++++ %s pos: %ld", value, pos);
+	}
+
+	return value;
+}
+
+xml_tag_t * libxml_parse_tag_nested (char * content_txt, long position, char * name)
+{
+	xml_tag_t * tag_t = NULL;
+
+	long bracket;
+	long slash;
+
+	bracket = libstring_search (content_txt + position, ">");
+	slash   = libstring_search (content_txt + position, "/>");
+
+	if ((bracket < slash) || (slash < 0))
+	{
+		char * close;
+		close = (char *) malloc ((bracket + 3) * sizeof (char));
+
+		close[0] = '<';
+		close[1] = '/';
+		libstring_concat (close, name);
+		libstring_concat (close, ">");
+		
+		long pos = 0;
+		long next_tag;
+		pos = libstring_search (content_txt + position, close);
+		next_tag = libxml_find_next_tag (content_txt, position);
+
+		if (pos > next_tag)
+			libxml_parse_tag (content_txt, next_tag, tag_t);
+
+		free (close);
+		
+		if (close != NULL)
+			printf ("\n3+++++++ %s pos: %ld", close, pos);
+	}
+
+	return tag_t;
+}
+
+xml_tag_t * libxml_parse_tag_sibling (char * content_txt, long position, char * name)
+{
+	xml_tag_t * tag_t = NULL;
+
+	long bracket;
+	long slash;
+	long sibling_pos = 0;
+
+	bracket = libstring_search (content_txt + position, ">");
+	slash   = libstring_search (content_txt + position, "/>");
+
+	if ((slash > 0) && (slash < bracket))
+	{
+		sibling_pos = slash + 2;
+	}
+	else if ((bracket < slash) || (slash < 0))
+	{
+		char * close;
+		close = (char *) malloc ((bracket + 3) * sizeof (char));
+
+		close[0] = '<';
+		close[1] = '/';
+		libstring_concat (close, name);
+		libstring_concat (close, ">");
+		
+		long pos = 0;
+		long next_tag;
+		pos = libstring_search (content_txt + position, close);
+
+		sibling_pos = position + pos + bracket + 3;
+		free (close);
+	}
+
+	if (sibling_pos > 0)
+	{
+		tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
+		libxml_parse_tag (content_txt, sibling_pos, tag_t);
+	}
+
+	return tag_t;
+}
+
+xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position, char * name)
+{
+	xml_attribute_t * attribute_t = NULL;
+
+	long offset;
+	long offset_aux;
+	long length;
+
+	while (1)
+	{
+		while (content_txt [position] == ' ') 	
+			position++;
+
+		offset = libstring_search (content_txt + position, "=");
+		offset_aux = libstring_search (content_txt + position, ">");
+		
+		if ((offset_aux <= offset) || (offset < 0))
+		{
+			return attribute_t;
+		}
+		else
+		{
+			xml_attribute_t * attribute_last_t = NULL;
+			attribute_last_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
+
+			char * name = (char *) malloc (offset * sizeof (char));
+			if (name == NULL)
+			{
+				printf ("\nLibXML: Error malloc");
+				return attribute_t;
+			}
+			length = libstring_subset (content_txt, position, offset, name);
+
+			position = position + length + 1;
+			offset = libstring_search (content_txt + position, "\"");
+			position = position + offset + 1;
+			offset = libstring_search (content_txt + position, "\"");
+
+			char * value = (char *) malloc (offset * sizeof (char));
+			length = libstring_subset (content_txt, position, offset, value);
+			position = position + offset + 1;
+
+			attribute_last_t->name = name;
+			attribute_last_t->value = value;
+			attribute_last_t->next_attribute_t = NULL;
+
+			if (attribute_t == NULL)
+				attribute_t = attribute_last_t;
+			else
+				attribute_t->next_attribute_t = attribute_last_t;
+		}
+	}
+	return attribute_t;
+}
+
+void libxml_parse_tag (char * content_txt, long position, xml_tag_t * tag_t)
+{
+	tag_t->name = libxml_parse_tag_name (content_txt, position);
+	tag_t->value = libxml_parse_tag_value (content_txt, position, tag_t->name);
+	tag_t->attribute_t = libxml_parse_tag_attribute (content_txt, position, tag_t->name);
+	tag_t->nested_tag_t = libxml_parse_tag_nested (content_txt, position, tag_t->name);
+	tag_t->sibling_tag_t = libxml_parse_tag_sibling (content_txt, position, tag_t->name);
+}
 
 xml_tag_t * libxml_parse_content (char * xml_txt)
 {
 	xml_tag_t * content; 
 	char * content_txt;
 	long position = 0;
-	long next_tag;
 
 	content_txt = libxml_read_content (xml_txt);
-int cont = 0;
-	while (cont < 10)
-	{
-		next_tag = libxml_find_next_tag (content_txt, position);
+	position = libxml_find_next_tag (content_txt, position);
 
-		printf("\nNext tag: %ld", next_tag);
-		position = next_tag + 1;
-		cont++;
-	}
+	content = (xml_tag_t *) malloc (sizeof (xml_tag_t));
 
+	libxml_parse_tag (content_txt, position, content);
 
+	
 	return content;
 }
-
 
 xml_attribute_t * libxmls_parse_instruction (char * instruction)
 {
@@ -260,11 +473,10 @@ xml_t * libxml_init_xml_mem (char * xml_txt)
 	return xml_mem;
 }
 
-
-
 /*********************************************************************************
  *                                  TESTS
  *********************************************************************************/
+
 void libxml_test_atributes (xml_attribute_t * attribute_t)
 {
 	if (attribute_t != NULL)
@@ -281,11 +493,9 @@ void libxml_test_atributes (xml_attribute_t * attribute_t)
 	}
 }
 
-
 /*********************************************************************************
  *                                   API
  *********************************************************************************/
-
 
 xml_t * libxml_xml_to_mem (char * xml_txt)
 {
@@ -321,25 +531,32 @@ xml_t * libxml_file_to_mem (char * xml_name)
 
 int main()
 {
-	FILE * xml_file;
+//	FILE * xml_file;
 //	long xml_length;
-	char * xml_txt;
+//	char * xml_txt;
 	xml_t * xml_mem;
 
 
-	xml_mem = libxml_file_to_mem ("example.xml");
+	xml_mem = libxml_file_to_mem (".ignore/example.xml");
 	free (xml_mem);
 
-#ifdef BASURA
-	//xml_file = libxml_open ("fichero.txt");
-	xml_file = libxml_open ("example.xml");
+	printf("\n");
 
-//    xml_length = libxml_length (xml_file);
+    return 0;
+}
+
+
+/*
+#ifdef BASURA
+// xml_file = libxml_open (".ignore/fichero.txt");
+	xml_file = libxml_open (".ignore/example.xml");
+
+// xml_length = libxml_length (xml_file);
 
 	printf ("\nEl archivo tiene un tamaño de %ld bytes", xml_length);
 
 	xml_txt = libxml_read (xml_file, -1);
-//printf ("\nFICHERO:\n%s", xml_txt);
+// printf ("\nFICHERO:\n%s", xml_txt);
 	xml_file = libxml_close (xml_file);
 
 char * aux;
@@ -353,9 +570,5 @@ printf ("\nInstructions: %s", aux);
 printf ("\nCONTENT:\n%s", aux);
 
 #endif
-printf("\n");
-
-    return 0;
-}
-
+*/
 

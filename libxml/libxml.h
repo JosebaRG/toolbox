@@ -22,7 +22,7 @@ typedef struct xml_tag_t
 {
 	char * name;
 	char * value;
-	struct xml_attribute_t * next_attribute_t;
+	struct xml_attribute_t * attribute_t;
 	struct xml_tag_t       * nested_tag_t;
 	struct xml_tag_t       * sibling_tag_t;
 }xml_tag_t;
