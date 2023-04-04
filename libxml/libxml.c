@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <limits.h>
 
+//borrame
+#include <unistd.h>
+
 /*********************************************************************************
  *                                 DECLARATIONS
  *********************************************************************************/
@@ -128,7 +131,7 @@ long libxml_find_next_tag (char * content_txt, long position)
 {
 	long content_length;
 	content_length = libstring_length (content_txt);
-	printf("\nLargo: %ld >> posicion: %ld", content_length, position);
+//	printf("\nLargo: %ld >> posicion: %ld", content_length, position);
 	
 	while ((content_txt [position] != '<') && (position < content_length))
 			position++;
@@ -172,12 +175,13 @@ char * libxml_parse_tag_name (char * content_txt, long position)
 	{
 		name = (char *) malloc (small * sizeof (char));
 		libstring_subset (content_txt, position, small, name);
+printf ("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> %s", name);
 	}
 	else
-		printf ("LIBXML: Error parsing tag name");
+		printf ("\nLIBXML: Error parsing tag name");
 
-	if (name != NULL)
-		printf ("\n1+++++++ %s ++++++++++ %ld", name, small);
+	//if (name != NULL)
+		//printf ("\n1+++++++ >%s< ++++++++++ %ld", name, small);
 
 	return name;
 }
@@ -192,31 +196,68 @@ char * libxml_parse_tag_value (char * content_txt, long position, char * name)
 	bracket = libstring_search (content_txt + position, ">");
 	slash   = libstring_search (content_txt + position, "/>");
 
+//////////////printf ("\n2+++++++ bracket: %ld slash: %ld", bracket, slash);
+
 	if ((bracket < slash) || (slash < 0))
 	{
 		char * close;
-		close = (char *) malloc ((bracket + 3) * sizeof (char));
+		long name_length;
+		name_length = libstring_length (name);
+		close = (char *) malloc ((name_length + 3) * sizeof (char)); // "</ >" three characters
 
 		close[0] = '<';
 		close[1] = '/';
+		close[2] = '\0';
 		libstring_concat (close, name);
 		libstring_concat (close, ">");
 		
-		long pos = 0;
+		long close_pos;
 		long next_tag;
-		pos = libstring_search (content_txt + position, close);
-		next_tag = libxml_find_next_tag (content_txt, position);
+		long start_pos;
 
-		if (pos = next_tag)
+		//start_pos = position + libstring_length (name) + 1;
+		start_pos = position + bracket + 1;
+
+		close_pos = libstring_search (content_txt + start_pos, close);
+		next_tag = libxml_find_next_tag (content_txt, start_pos);
+//printf ("\n:::::::::::: close_pos: %ld next_tag: %ld position: %ld", close_pos, next_tag, position);
+/*
+char texto [10];
+libstring_subset (content_txt, start_pos, close_pos, texto);
+printf ("\nclose: -%s-", texto);
+libstring_subset (content_txt, start_pos, next_tag - start_pos - 1, texto);
+printf ("\nclose: -%s-", texto);
+printf ("\nclose: -%ld-", next_tag - start_pos - 1);
+*/
+		long length;
+		length = next_tag - start_pos - 1;
+
+		if (close_pos == length)
 		{
-			value = (char *) malloc ((pos - position) * sizeof (char));
-			libstring_subset (content_txt, position + bracket + 1, pos - bracket, value);
+//printf ("\n::::: >%s< ::::::: %ld", name, length);
+			if (length > 0)
+			{
+				value = (char *) malloc (length * sizeof (char));
+				libstring_subset (content_txt, start_pos, length, value);
+				printf ("\n>>>%s has tag value: -%s-", name, value);
+			}
+			else
+			{
+				printf ("\nLibXML: Error reading tag value.");
+			}
+		}
+		else
+		{
+			printf ("\n>>>%s has no tag values (2)", name);
 		}
 
+		//if (value != NULL)
+//printf ("\n2+++++++ >%s< position: %ld bracket: %ld pos: %ld", value, position, bracket, close_pos);
 		free (close);
-		
-		if (value != NULL)
-			printf ("\n2+++++++ %s pos: %ld", value, pos);
+	}
+	else
+	{
+		printf ("\n>>>%s has no tag values (1)", name);
 	}
 
 	return value;
@@ -235,25 +276,50 @@ xml_tag_t * libxml_parse_tag_nested (char * content_txt, long position, char * n
 	if ((bracket < slash) || (slash < 0))
 	{
 		char * close;
-		close = (char *) malloc ((bracket + 3) * sizeof (char));
-
+		long name_length;
+		name_length = libstring_length (name);
+		close = (char *) malloc ((name_length + 3) * sizeof (char)); // "</ >" three characters
 		close[0] = '<';
 		close[1] = '/';
+		close[2] = '\0';
 		libstring_concat (close, name);
 		libstring_concat (close, ">");
-		
-		long pos = 0;
+//printf ("\n3------- +%s+", close);
+/*		
+		long close_pos;
 		long next_tag;
-		pos = libstring_search (content_txt + position, close);
-		next_tag = libxml_find_next_tag (content_txt, position);
+		close_pos = libstring_search (content_txt + position, close);
+		next_tag = libxml_find_next_tag (content_txt, position);*/
+	
+		long close_pos;
+		long next_tag;
+		long start_pos;
 
-		if (pos > next_tag)
+		start_pos = position + libstring_length (name) +1 ;
+
+		close_pos = libstring_search (content_txt + start_pos, close);
+		next_tag = libxml_find_next_tag (content_txt, start_pos);
+//printf ("\n3+++++++ +%s+ pos: %ld next: %ld", close, close_pos, next_tag);
+
+		if (close_pos > (next_tag - start_pos - 1))
+		{
+			long length;
+			length = position + next_tag;
+			printf ("\n%s has nested on %ld", name, length);
+			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
+
 			libxml_parse_tag (content_txt, next_tag, tag_t);
-
-		free (close);
+		}
+		else
+		{
+			printf ("\n%s has no nested (2)", name);
+		}
 		
-		if (close != NULL)
-			printf ("\n3+++++++ %s pos: %ld", close, pos);
+		free (close);
+	}
+	else
+	{
+		printf ("\n%s has no nested (1)", name);
 	}
 
 	return tag_t;
@@ -270,34 +336,77 @@ xml_tag_t * libxml_parse_tag_sibling (char * content_txt, long position, char * 
 	bracket = libstring_search (content_txt + position, ">");
 	slash   = libstring_search (content_txt + position, "/>");
 
-	if ((slash > 0) && (slash < bracket))
+	if ((slash > 0) && (slash <= bracket))
 	{
-		sibling_pos = slash + 2;
+		sibling_pos = position + slash + 2; // "/>" two characters
 	}
 	else if ((bracket < slash) || (slash < 0))
 	{
 		char * close;
-		close = (char *) malloc ((bracket + 3) * sizeof (char));
+		long name_length;
+		name_length = libstring_length (name);
+		close = (char *) malloc ((name_length + 3) * sizeof (char)); // "</ >" three characters
 
 		close[0] = '<';
 		close[1] = '/';
+		close[2] = '\0';
 		libstring_concat (close, name);
 		libstring_concat (close, ">");
-		
-		long pos = 0;
-		long next_tag;
-		pos = libstring_search (content_txt + position, close);
 
-		sibling_pos = position + pos + bracket + 3;
+		long close_pos;
+		close_pos = libstring_search (content_txt + position, close);
+//printf ("\n4------- name: +%s+ close: +%s+ pos: %ld", name, close, close_pos);
+
+		sibling_pos = position + close_pos + name_length + 3;
+
+//printf ("\n4------- %s", content_txt + sibling_pos);
 		free (close);
 	}
+/*
+char aux [20];
+libstring_subset (content_txt, sibling_pos, 20, aux);
+printf ("\n****%s****", aux);
+*/
+//printf ("\n4++++++ position: %ld bracket: %ld slash: %ld sibling: %ld", position, bracket, slash, sibling_pos);
 
 	if (sibling_pos > 0)
 	{
-		tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-		libxml_parse_tag (content_txt, sibling_pos, tag_t);
-	}
+		long next_tag;
+		long next_close;
+		next_tag = libxml_find_next_tag (content_txt, sibling_pos);
+		next_close = libstring_search (content_txt + sibling_pos, "</");
+//printf ("\n4------- next_tag: %ld next_close: %ld", next_tag, next_close);
 
+		if (next_tag < 0)
+		{
+			printf ("\n%s has no sibling (3)", name);
+			return tag_t;
+		}
+			
+
+		if (next_close > 0)
+			next_close = next_close + sibling_pos + 1;
+
+//printf ("\n4------- next_tag: %ld next_close: %ld", next_tag, next_close);
+
+//printf ("\n4--++--- %s", content_txt + next_tag);
+		
+		if (next_tag < next_close)
+		{
+			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
+			printf ("\n%s has sibling on %ld", name, next_tag);
+			libxml_parse_tag (content_txt, next_tag, tag_t);
+		}
+		else
+		{
+			printf ("\n%s has no sibling (2)", name);
+		}
+
+	}
+	else
+	{
+		printf ("\n%s has no sibling (1)", name);
+	}
 	return tag_t;
 }
 
@@ -308,6 +417,8 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 	long offset;
 	long offset_aux;
 	long length;
+
+	position = position + libstring_length (name);
 
 	while (1)
 	{
@@ -343,6 +454,8 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 			length = libstring_subset (content_txt, position, offset, value);
 			position = position + offset + 1;
 
+//printf ("\n5----- name: >%s< value: >%s<", name, value);
+
 			attribute_last_t->name = name;
 			attribute_last_t->value = value;
 			attribute_last_t->next_attribute_t = NULL;
@@ -358,6 +471,8 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 
 void libxml_parse_tag (char * content_txt, long position, xml_tag_t * tag_t)
 {
+sleep (0);
+
 	tag_t->name = libxml_parse_tag_name (content_txt, position);
 	tag_t->value = libxml_parse_tag_value (content_txt, position, tag_t->name);
 	tag_t->attribute_t = libxml_parse_tag_attribute (content_txt, position, tag_t->name);
@@ -388,7 +503,7 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 	long offset, offset_aux, length;
 	long position = 0;
 
-printf("\n%s", instruction);
+//printf("\n%s", instruction);
 
 	offset = libstring_search (instruction + position, "<?");
 	position = position + libstring_length ("<?");
@@ -519,7 +634,7 @@ xml_t * libxml_file_to_mem (char * xml_name)
 	xml_file = libxml_close (xml_file);
 	
 	xml_mem = libxml_xml_to_mem (xml_txt);
-	libxml_test_atributes (xml_mem->instruction_t);
+
 	free (xml_txt);
 	return xml_mem;
 }
@@ -538,6 +653,7 @@ int main()
 
 
 	xml_mem = libxml_file_to_mem (".ignore/example.xml");
+//	libxml_test_atributes (xml_mem->instruction_t);
 	free (xml_mem);
 
 	printf("\n");
