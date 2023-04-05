@@ -51,9 +51,9 @@ long libstring_search (char * text, char * searched);
  * @return struct with the strings from before, matched and after
  * 		   and the position of text where matched string begins
  */
-match_pattern_t libstring_match_pattern (char * string, char * match);
+//match_pattern_t libstring_match_pattern (char * string, char * match);
 
-match_pattern_t libstring_free_matched (match_pattern_t matched_t);
+//match_pattern_t libstring_free_matched (match_pattern_t matched_t);
 
 
 #endif //_LIBSTRING_H
