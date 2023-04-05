@@ -33,9 +33,11 @@ long free_attribute (xml_attribute_t * attribute_t)
 	{
 		free (attribute_t->name);
 		free (attribute_t->value);
-
+		
 		quantity = free_attribute (attribute_t->next_attribute_t);
 		quantity++;
+
+		free (attribute_t);
 	}
 	else
 	{
@@ -61,6 +63,8 @@ long free_tag (xml_tag_t * tag_t)
 		aux = free_tag (tag_t->sibling_tag_t);
 		quantity = quantity + aux;
 		quantity++;
+
+		free (tag_t);
 	}
 	else
 	{
@@ -706,6 +710,7 @@ long free_xml_mem (xml_t * xml_mem_t)
 	{
 		quantity = free_attribute (xml_mem_t->instruction_t);
 		aux = free_tag (xml_mem_t->content_t);
+		free (xml_mem_t);
 		quantity = quantity + aux;
 	}
 	else
