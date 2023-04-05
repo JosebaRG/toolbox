@@ -218,6 +218,30 @@ char * libxml_read (FILE * xml_file, long xml_length)
  *                                PARSE FUNCTIONS
  *********************************************************************************/
 
+char * libxml_check_empty (char * element)
+{
+	long length;
+	length = libstring_length (element);
+
+	while (length > 0)
+	{
+		if ((element [length - 1] != ' ')
+			&& (element [length - 1] != '\n')
+			&& (element [length - 1] != '\t'))
+		{
+			length--;
+		}
+		else
+		{
+			free (element);
+			element = NULL;
+			break;
+		}
+	}
+
+	return element;
+}
+
 char * libxml_read_instruction (char * xml_txt)
 {
 	char * instruction;
@@ -373,6 +397,7 @@ printf ("\nclose: -%ld-", next_tag - start_pos - 1);
 			{
 				value = (char *) malloc (length * sizeof (char));
 				libstring_subset (content_txt, start_pos, length, value);
+				value = libxml_check_empty (value);
 				printf ("\n>>>%s has tag value: -%s-", name, value);
 			}
 			else
@@ -836,7 +861,7 @@ int main()
 	xml_mem_t = libxml_file_to_mem (".ignore/example.xml");
 //	libxml_test_atributes (xml_mem_t->instruction_t);
 	
-	libxml_mem_to_file (xml_mem_t, "xml_name.xml");
+	libxml_mem_to_file (xml_mem_t, ".ignore/xml_name.xml");
 	
 	quantity = free_xml_mem (xml_mem_t);
 
