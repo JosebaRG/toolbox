@@ -26,8 +26,8 @@ typedef struct xml_tag_t
 }xml_tag_t;
 
 long free_xml_mem (xml_t * xml_mem_t);
-char  * libxml_mem_to_xml  (xml_t * xml_mem_t);
-FILE  * libxml_mem_to_file (xml_t * xml_mem_t);
+//char  * libxml_mem_to_xml  (xml_t * xml_mem_t);
+FILE  * libxml_mem_to_file (xml_t * xml_mem_t, char * xml_name);
 xml_t * libxml_xml_to_mem  (char  * xml_txt);
 xml_t * libxml_file_to_mem (char  * xml_name);
 

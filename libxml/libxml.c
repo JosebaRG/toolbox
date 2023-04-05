@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <limits.h>
+#include <stdio.h>
 
 #include "libxml.h"
 #include "libstring.h"
@@ -11,6 +12,7 @@
  *                                 DECLARATIONS
  *********************************************************************************/
 
+FILE * libxml_create (char * xml_name);
 FILE * libxml_open (char * xml_name);
 FILE * libxml_close (FILE * xml_file);
 
@@ -78,12 +80,81 @@ long free_tag (xml_tag_t * tag_t)
  *                             MEM TO FILE FUNCTIONS
  *********************************************************************************/
 
+void libxml_write_attribute (FILE * xml_file, xml_attribute_t * attribute_t)
+{
+	if (attribute_t != NULL)
+	{
+		fprintf (xml_file, " %s=\"%s\"", attribute_t->name, attribute_t->value);
+		
+		libxml_write_attribute (xml_file, attribute_t->next_attribute_t);
+	}
+}
 
+void libxml_write_instruction (FILE * xml_file, xml_attribute_t * instruction_t)
+{
+	fprintf (xml_file, "<?xml");
+
+	libxml_write_attribute (xml_file, instruction_t);
+
+	fprintf (xml_file, "?>");
+}
+
+void libxml_write_tag (FILE * xml_file, xml_tag_t * tag_t, int indent)
+{
+	fprintf (xml_file, "\n");
+
+	int i;
+	for (i=0; i<indent; i++)
+		fprintf (xml_file, "\t");
+
+	fprintf (xml_file, "<%s", tag_t->name);
+
+	libxml_write_attribute (xml_file, tag_t->attribute_t);
+
+	if ((tag_t->value == NULL) && (tag_t->nested_tag_t == NULL))
+		fprintf (xml_file, "/>");
+	else
+		fprintf (xml_file, ">");
+
+	if ((tag_t->value == NULL) && (tag_t->nested_tag_t != NULL))
+	{
+		libxml_write_tag (xml_file, tag_t->nested_tag_t, indent + 1);
+		fprintf (xml_file, "\n");
+		for (i=0; i<indent; i++)
+			fprintf (xml_file, "\t");
+	}
+
+	if ((tag_t->value != NULL) && (tag_t->nested_tag_t == NULL))
+		fprintf (xml_file, "%s", tag_t->value);
+
+	if ((tag_t->value != NULL) && (tag_t->nested_tag_t != NULL))
+		printf ("\nLibXML: Error writing tag with value and nested_tag");
+
+	if ((tag_t->value != NULL) || (tag_t->nested_tag_t != NULL))
+		fprintf (xml_file, "</%s>", tag_t->name);
+
+	if (tag_t->sibling_tag_t != NULL)
+		libxml_write_tag (xml_file, tag_t->sibling_tag_t, indent);
+}
 
 
 /*********************************************************************************
- *                             FILE TO MEM FUNCTIONS
+ *                                 FILE FUNCTIONS
  *********************************************************************************/
+
+FILE * libxml_create (char * xml_name)
+{
+	FILE * xml_file;
+
+    xml_file = fopen (xml_name, "w");
+	if (xml_file == NULL)
+	{
+        printf ("\nLibXML: Error creating file");
+        return NULL;
+    }
+
+	return xml_file;
+}
 
 FILE * libxml_open (char * xml_name)
 {
@@ -155,8 +226,8 @@ char * libxml_read_instruction (char * xml_txt)
 	long inst_end;
 	long inst_length;
 	
-	inst_start = libstring_search (xml_txt, "<?");
-	inst_end   = libstring_search (xml_txt, "?>");
+	inst_start  = libstring_search (xml_txt, "<?");
+	inst_end    = libstring_search (xml_txt, "?>");
 	inst_length = inst_end - inst_start + 2; // two characters extra for "?>"
 
 	if (inst_end <= inst_start)
@@ -476,6 +547,7 @@ printf ("\n****%s****", aux);
 xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position, char * name)
 {
 	xml_attribute_t * attribute_t = NULL;
+	xml_attribute_t * attribute_last_t = NULL;
 
 	long offset;
 	long offset_aux;
@@ -497,9 +569,21 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 		}
 		else
 		{
-			xml_attribute_t * attribute_last_t;
-			attribute_last_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
 
+			xml_attribute_t * attribute_aux_t;
+			attribute_aux_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
+			
+			if (attribute_t == NULL)
+				attribute_t = attribute_aux_t;
+
+			if (attribute_last_t == NULL)
+				attribute_last_t = attribute_aux_t;
+			else
+			{
+				attribute_last_t->next_attribute_t = attribute_aux_t;
+				attribute_last_t = attribute_last_t->next_attribute_t;
+			}
+				
 			char * name = (char *) malloc (offset * sizeof (char));
 			if (name == NULL)
 			{
@@ -522,11 +606,6 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 			attribute_last_t->name = name;
 			attribute_last_t->value = value;
 			attribute_last_t->next_attribute_t = NULL;
-
-			if (attribute_t == NULL)
-				attribute_t = attribute_last_t;
-			else
-				attribute_t->next_attribute_t = attribute_last_t;
 		}
 	}
 	return attribute_t;
@@ -561,6 +640,8 @@ xml_tag_t * libxml_parse_content (char * xml_txt)
 xml_attribute_t * libxmls_parse_instruction (char * instruction)
 {
 	xml_attribute_t * attribute_t = NULL;
+	xml_attribute_t * attribute_last_t = NULL;
+
 	long offset;
 	long offset_aux;
 	long length;
@@ -601,10 +682,19 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 		}
 		else
 		{
-			xml_attribute_t * attribute_last_t = NULL;
-			attribute_last_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
+			xml_attribute_t * attribute_aux_t;
+			attribute_aux_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
+			
+			if (attribute_t == NULL)
+				attribute_t = attribute_aux_t;
 
-			char * name = (char *) malloc (offset * sizeof (char));
+			if (attribute_last_t == NULL)
+				attribute_last_t = attribute_aux_t;
+			else
+			{
+				attribute_last_t->next_attribute_t = attribute_aux_t;
+				attribute_last_t = attribute_last_t->next_attribute_t;
+			}			char * name = (char *) malloc (offset * sizeof (char));
 			if (name == NULL)
 			{
 				printf ("\nLibXML: Error malloc");
@@ -624,11 +714,6 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 			attribute_last_t->name = name;
 			attribute_last_t->value = value;
 			attribute_last_t->next_attribute_t = NULL;
-
-			if (attribute_t == NULL)
-				attribute_t = attribute_last_t;
-			else
-				attribute_t->next_attribute_t = attribute_last_t;
 		}
 	}
 	return attribute_t;
@@ -651,29 +736,46 @@ xml_t * libxml_init_xml_mem (char * xml_txt)
 	return xml_mem_t;
 }
 
-/*********************************************************************************
- *                                  TESTS
- *********************************************************************************/
-
-void libxml_test_atributes (xml_attribute_t * attribute_t)
-{
-	if (attribute_t != NULL)
-	{
-		printf ("\n+++++++++++++++");
-		printf ("\nCampo: %s", attribute_t->name);
-		printf ("\nValor: %s", attribute_t->value);
-		
-		libxml_test_atributes (attribute_t->next_attribute_t);
-	}
-	else
-	{
-		printf("\nAtributo en blanco");
-	}
-}
 
 /*********************************************************************************
  *                                   API
  *********************************************************************************/
+
+long free_xml_mem (xml_t * xml_mem_t)
+{
+	long quantity;
+	long aux;
+
+	if (xml_mem_t != NULL)
+	{
+		quantity = free_attribute (xml_mem_t->instruction_t);
+		aux = free_tag (xml_mem_t->content_t);
+		free (xml_mem_t);
+		quantity = quantity + aux;
+	}
+	else
+	{
+		quantity = 0;
+	}
+
+	return quantity;
+}
+
+FILE  * libxml_mem_to_file (xml_t * xml_mem_t, char * xml_name)
+{
+	FILE * xml_file;
+
+	xml_file = libxml_create (xml_name);
+
+	libxml_write_instruction (xml_file, xml_mem_t->instruction_t);
+
+	libxml_write_tag (xml_file, xml_mem_t->content_t, 0);
+
+	//libxml_close (FILE * xml_file);
+
+	return xml_file;
+}
+
 
 xml_t * libxml_xml_to_mem (char * xml_txt)
 {
@@ -701,29 +803,25 @@ xml_t * libxml_file_to_mem (char * xml_name)
 	return xml_mem_t;
 }
 
-long free_xml_mem (xml_t * xml_mem_t)
-{
-	long quantity;
-	long aux;
+/*********************************************************************************
+ *                                  TESTS
+ *********************************************************************************/
 
-	if (xml_mem_t != NULL)
+void libxml_test_atributes (xml_attribute_t * attribute_t)
+{
+	if (attribute_t != NULL)
 	{
-		quantity = free_attribute (xml_mem_t->instruction_t);
-		aux = free_tag (xml_mem_t->content_t);
-		free (xml_mem_t);
-		quantity = quantity + aux;
+		printf ("\n+++++++++++++++");
+		printf ("\nCampo: %s", attribute_t->name);
+		printf ("\nValor: %s", attribute_t->value);
+		
+		libxml_test_atributes (attribute_t->next_attribute_t);
 	}
 	else
 	{
-		quantity = 0;
+		printf("\nAtributo en blanco");
 	}
-
-	return quantity;
 }
-
-
-/*****************************************************************************/
-
 
 int main()
 {
@@ -733,16 +831,19 @@ int main()
 	xml_t * xml_mem_t;
 	long quantity;
 
-while (1)
-{
+//while (1)
+//{
 	xml_mem_t = libxml_file_to_mem (".ignore/example.xml");
 //	libxml_test_atributes (xml_mem_t->instruction_t);
+	
+	libxml_mem_to_file (xml_mem_t, "xml_name.xml");
+	
 	quantity = free_xml_mem (xml_mem_t);
 
 	printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++ %ld\n\n", quantity);
 
 	printf("\n");
-}
+//}
     return 0;
 }
 
