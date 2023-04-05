@@ -1,6 +1,8 @@
-#include "libxml.h"
-#include <stdbool.h>
+#include <stdlib.h>
 #include <limits.h>
+
+#include "libxml.h"
+#include "libstring.h"
 
 //borrame
 #include <unistd.h>
@@ -20,7 +22,63 @@ char * libxml_read_content (char * xml_txt);
 void libxml_parse_tag (char * content_txt, long position, xml_tag_t * tag_t);
 
 /*********************************************************************************
- *                                 FILE FUNCTIONS
+ *                                  FREE MEMORY
+ *********************************************************************************/
+
+long free_attribute (xml_attribute_t * attribute_t)
+{
+	long quantity;
+
+	if (attribute_t != NULL)
+	{
+		free (attribute_t->name);
+		free (attribute_t->value);
+
+		quantity = free_attribute (attribute_t->next_attribute_t);
+		quantity++;
+	}
+	else
+	{
+		quantity = 0;
+	}
+
+	return quantity;
+}
+
+long free_tag (xml_tag_t * tag_t)
+{
+	long quantity;
+	long aux;
+
+	if (tag_t != NULL)
+	{
+		free (tag_t->name);
+		free (tag_t->value);
+
+		quantity = free_attribute (tag_t->attribute_t);
+		aux = free_tag (tag_t->nested_tag_t);
+		quantity = quantity + aux;
+		aux = free_tag (tag_t->sibling_tag_t);
+		quantity = quantity + aux;
+		quantity++;
+	}
+	else
+	{
+		quantity = 0;
+	}
+
+	return quantity;
+}
+
+/*********************************************************************************
+ *                             MEM TO FILE FUNCTIONS
+ *********************************************************************************/
+
+
+
+
+/*********************************************************************************
+ *                             FILE TO MEM FUNCTIONS
  *********************************************************************************/
 
 FILE * libxml_open (char * xml_name)
@@ -87,20 +145,21 @@ char * libxml_read (FILE * xml_file, long xml_length)
 
 char * libxml_read_instruction (char * xml_txt)
 {
+	char * instruction;
+
 	long inst_start;
 	long inst_end;
 	long inst_length;
 	
 	inst_start = libstring_search (xml_txt, "<?");
 	inst_end   = libstring_search (xml_txt, "?>");
-	// two characters extra for "?>"
-	inst_length = inst_end - inst_start + 2;
+	inst_length = inst_end - inst_start + 2; // two characters extra for "?>"
 
 	if (inst_end <= inst_start)
 		return NULL;
 
-	char * instruction = (char *) malloc (inst_length * sizeof (char));
-
+	
+	instruction = (char *) malloc (inst_length * sizeof (char));
 	libstring_subset (xml_txt, inst_start, inst_length, instruction);
 	
 	return instruction;
@@ -434,7 +493,7 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 		}
 		else
 		{
-			xml_attribute_t * attribute_last_t = NULL;
+			xml_attribute_t * attribute_last_t;
 			attribute_last_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
 
 			char * name = (char *) malloc (offset * sizeof (char));
@@ -482,25 +541,25 @@ sleep (0);
 
 xml_tag_t * libxml_parse_content (char * xml_txt)
 {
-	xml_tag_t * content; 
+	xml_tag_t * content_t; 
 	char * content_txt;
 	long position = 0;
 
 	content_txt = libxml_read_content (xml_txt);
 	position = libxml_find_next_tag (content_txt, position);
+	content_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
 
-	content = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-
-	libxml_parse_tag (content_txt, position, content);
-
+	libxml_parse_tag (content_txt, position, content_t);
 	
-	return content;
+	return content_t;
 }
 
 xml_attribute_t * libxmls_parse_instruction (char * instruction)
 {
 	xml_attribute_t * attribute_t = NULL;
-	long offset, offset_aux, length;
+	long offset;
+	long offset_aux;
+	long length;
 	long position = 0;
 
 //printf("\n%s", instruction);
@@ -574,18 +633,18 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 xml_t * libxml_init_xml_mem (char * xml_txt)
 {
 	char * instruction;
-	xml_t * xml_mem;
+	xml_t * xml_mem_t;
 
-	xml_mem = (xml_t *) malloc (sizeof (xml_t));
+	xml_mem_t = (xml_t *) malloc (sizeof (xml_t));
 
-	xml_mem->instruction_t = NULL;
-	xml_mem->content_t = NULL;
+	xml_mem_t->instruction_t = NULL;
+	xml_mem_t->content_t = NULL;
 
 	instruction = libxml_read_instruction (xml_txt);
-	xml_mem->instruction_t = libxmls_parse_instruction (instruction);
+	xml_mem_t->instruction_t = libxmls_parse_instruction (instruction);
 	
 	free (instruction);
-	return xml_mem;
+	return xml_mem_t;
 }
 
 /*********************************************************************************
@@ -614,31 +673,48 @@ void libxml_test_atributes (xml_attribute_t * attribute_t)
 
 xml_t * libxml_xml_to_mem (char * xml_txt)
 {
-	xml_tag_t * content; 
-	xml_t * xml_mem;
-	xml_mem = libxml_init_xml_mem (xml_txt);
+	xml_t * xml_mem_t;
 
-	content = libxml_parse_content (xml_txt);
+	xml_mem_t = libxml_init_xml_mem (xml_txt);
+	xml_mem_t->content_t = libxml_parse_content (xml_txt);
 
-	return xml_mem;
+	return xml_mem_t;
 }
 
 xml_t * libxml_file_to_mem (char * xml_name)
 {
 	char * xml_txt;
 	FILE * xml_file;
-	xml_t * xml_mem;
+	xml_t * xml_mem_t;
 
 	xml_file = libxml_open (xml_name);
 	xml_txt = libxml_read (xml_file, -1);
 	xml_file = libxml_close (xml_file);
 	
-	xml_mem = libxml_xml_to_mem (xml_txt);
+	xml_mem_t = libxml_xml_to_mem (xml_txt);
 
 	free (xml_txt);
-	return xml_mem;
+	return xml_mem_t;
 }
 
+long free_xml_mem (xml_t * xml_mem_t)
+{
+	long quantity;
+	long aux;
+
+	if (xml_mem_t != NULL)
+	{
+		quantity = free_attribute (xml_mem_t->instruction_t);
+		aux = free_tag (xml_mem_t->content_t);
+		quantity = quantity + aux;
+	}
+	else
+	{
+		quantity = 0;
+	}
+
+	return quantity;
+}
 
 
 /*****************************************************************************/
@@ -649,15 +725,19 @@ int main()
 //	FILE * xml_file;
 //	long xml_length;
 //	char * xml_txt;
-	xml_t * xml_mem;
+	xml_t * xml_mem_t;
+	long quantity;
 
+while (1)
+{
+	xml_mem_t = libxml_file_to_mem (".ignore/example.xml");
+//	libxml_test_atributes (xml_mem_t->instruction_t);
+	quantity = free_xml_mem (xml_mem_t);
 
-	xml_mem = libxml_file_to_mem (".ignore/example.xml");
-//	libxml_test_atributes (xml_mem->instruction_t);
-	free (xml_mem);
+	printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++ %ld\n\n", quantity);
 
 	printf("\n");
-
+}
     return 0;
 }
 
