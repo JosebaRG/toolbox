@@ -45,7 +45,7 @@ long libstring_subset (char * text, long offset, long length, char * subset)
 	return copied ;
 }
 
-long libstring_replace (char * text, char * replace, long offset)
+long libstring_replace (char * text, long offset, char * replace)
 {
 	long replaced = 0;
 	long length = libstring_length(replace);
@@ -62,9 +62,9 @@ long libstring_replace (char * text, char * replace, long offset)
 	return replaced;
 }
 
-long libstring_search (char * text, char * searched)
+long libstring_search (char * text, long offset, char * searched)
 {
-	long length_t = libstring_length(text);
+	long length_t = libstring_length(text + offset);
 	long length_s = libstring_length(searched);
 
 	if (length_s > length_t)
@@ -76,7 +76,7 @@ long libstring_search (char * text, char * searched)
 
 	long position = 0;
 	
-	while (text [position] != '\0')
+	while (text [ofsset + position] != '\0')
 	{
 		libstring_subset(text, position, length_s, ptr_aux);
 		//printf("\n++ %s - %s", ptr_aux, searched);
