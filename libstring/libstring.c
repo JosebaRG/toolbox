@@ -4,11 +4,8 @@ long libstring_length (char * text)
 {
 	long length = 0;
 
-	while (text[0] != '\0')
-	{
+	while (text [length] != '\0')
 		length++;
-		text++;
-	}
 		
 	return length;
 }
@@ -42,7 +39,7 @@ long libstring_subset (char * text, long offset, long length, char * subset)
 
 	subset [copied] = '\0';
 
-	return copied ;
+	return copied;
 }
 
 long libstring_replace (char * text, char * replace, long offset)
@@ -62,6 +59,21 @@ long libstring_replace (char * text, char * replace, long offset)
 	return replaced;
 }
 
+int libstring_compare (char * a, char * b)
+{
+	long length_a = libstring_length(a);
+	long length_b = libstring_length(b);
+
+	if (length_a != length_b)
+		return -1;
+
+	for (long i=0; i<length_a; i++)
+		if (a [i] != b [i])
+			return -1;
+
+	return 0;
+}
+
 long libstring_search (char * text, char * searched)
 {
 	long length_t = libstring_length(text);
@@ -70,21 +82,23 @@ long libstring_search (char * text, char * searched)
 	if (length_s > length_t)
 		return -1;
 
-	char aux [length_s];
-	strcpy(aux, "\0");
-	char * ptr_aux = aux;
+	char * ptr_aux;
+	ptr_aux = (char *) malloc ((length_s) * sizeof (char));
 
 	long position = 0;
 	
 	while (text [position] != '\0')
 	{
 		libstring_subset(text, position, length_s, ptr_aux);
-		//printf("\n++ %s - %s", ptr_aux, searched);
 		if (strcmp(ptr_aux, searched) == 0)
+		{
+			free (ptr_aux);
 			return position;
+		}
 		position ++;
 	}
 
+	free (ptr_aux);
 	return -1;
 }
 
@@ -201,7 +215,7 @@ void main()
 	
 	long searched_pos = 0;
 
-	searched_pos = libstring_search(pr_A, pr_B);
+	searched_pos = ibstring_search(pr_A, pr_B);
 
 	printf("\nSearch --> %ld", searched_pos);
 
