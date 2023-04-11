@@ -250,8 +250,8 @@ char * libxml_read_instruction (char * xml_txt)
 	long inst_end;
 	long inst_length;
 	
-	inst_start  = libstring_search (xml_txt, "<?");
-	inst_end    = libstring_search (xml_txt, "?>");
+	inst_start  = libstring_search (xml_txt, 0, "<?");
+	inst_end    = libstring_search (xml_txt, 0, "?>");
 	inst_length = inst_end - inst_start + 2; // two characters extra for "?>"
 
 	if (inst_end <= inst_start)
@@ -270,12 +270,12 @@ char * libxml_read_content (char * xml_txt)
 	long inst_end;
 	long main_start;
 
-	inst_end = libstring_search (xml_txt, "?>");
+	inst_end = libstring_search (xml_txt, 0, "?>");
 	// two characters extra for "?>"
 	inst_end = inst_end + 2;
 
-	main_start = libstring_search (xml_txt + inst_end, "<");
-	next_inst  = libstring_search (xml_txt + inst_end, "<?");
+	main_start = libstring_search (xml_txt, inst_end, "<");
+	next_inst  = libstring_search (xml_txt, inst_end, "<?");
 
 	if (next_inst > 0)
 	{
@@ -310,9 +310,9 @@ char * libxml_parse_tag_name (char * content_txt, long position)
 	long slash;
 	long small = LONG_MAX;  // Maximum possible value for long
 
-	blank   = libstring_search (content_txt + position, " ");
-	bracket = libstring_search (content_txt + position, ">");
-	slash   = libstring_search (content_txt + position, "/>");
+	blank   = libstring_search (content_txt, position, " ");
+	bracket = libstring_search (content_txt, position, ">");
+	slash   = libstring_search (content_txt, position, "/>");
 /*
 	char subset [501];
 	libstring_subset (content_txt, position, 500, subset);
@@ -351,8 +351,8 @@ char * libxml_parse_tag_value (char * content_txt, long position, char * name)
 	long bracket;
 	long slash;
 
-	bracket = libstring_search (content_txt + position, ">");
-	slash   = libstring_search (content_txt + position, "/>");
+	bracket = libstring_search (content_txt, position, ">");
+	slash   = libstring_search (content_txt, position, "/>");
 
 //////////////printf ("\n2+++++++ bracket: %ld slash: %ld", bracket, slash);
 
@@ -376,7 +376,7 @@ char * libxml_parse_tag_value (char * content_txt, long position, char * name)
 		//start_pos = position + libstring_length (name) + 1;
 		start_pos = position + bracket + 1;
 
-		close_pos = libstring_search (content_txt + start_pos, close);
+		close_pos = libstring_search (content_txt, start_pos, close);
 		next_tag = libxml_find_next_tag (content_txt, start_pos);
 //printf ("\n:::::::::::: close_pos: %ld next_tag: %ld position: %ld", close_pos, next_tag, position);
 /*
@@ -429,11 +429,16 @@ xml_tag_t * libxml_parse_tag_nested (char * content_txt, long position, char * n
 	long bracket;
 	long slash;
 
-	bracket = libstring_search (content_txt + position, ">");
-	slash   = libstring_search (content_txt + position, "/>");
+	bracket = libstring_search (content_txt, position, ">");
+	slash   = libstring_search (content_txt, position, "/>");
 
 	if ((bracket < slash) || (slash < 0))
 	{
+if (strcmp (name, "1234567890123") == 0)
+{
+	//basura
+	printf ("\n\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+}
 		char * close;
 		long name_length;
 		name_length = libstring_length (name);
@@ -454,11 +459,21 @@ xml_tag_t * libxml_parse_tag_nested (char * content_txt, long position, char * n
 		long next_tag;
 		long start_pos;
 
-		start_pos = position + libstring_length (name) +1 ;
+		start_pos = position + name_length + 1;
 
-		close_pos = libstring_search (content_txt + start_pos, close);
+		close_pos = libstring_search (content_txt, start_pos, close);
 		next_tag = libxml_find_next_tag (content_txt, start_pos);
 //printf ("\n3+++++++ +%s+ pos: %ld next: %ld", close, close_pos, next_tag);
+
+if (strcmp (name, "DataTemplates") == 0)
+{
+	printf ("\n\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+	
+	printf ("\n\n%s : %s", name, close);
+	printf ("\n\n%ld - %ld - %ld", close_pos, next_tag, start_pos);
+
+	printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+}
 
 		if (close_pos > (next_tag - start_pos - 1))
 		{
@@ -492,8 +507,8 @@ xml_tag_t * libxml_parse_tag_sibling (char * content_txt, long position, char * 
 	long slash;
 	long sibling_pos = 0;
 
-	bracket = libstring_search (content_txt + position, ">");
-	slash   = libstring_search (content_txt + position, "/>");
+	bracket = libstring_search (content_txt, position, ">");
+	slash   = libstring_search (content_txt, position, "/>");
 
 	if ((slash > 0) && (slash <= bracket))
 	{
@@ -513,7 +528,7 @@ xml_tag_t * libxml_parse_tag_sibling (char * content_txt, long position, char * 
 		libstring_concat (close, ">");
 
 		long close_pos;
-		close_pos = libstring_search (content_txt + position, close);
+		close_pos = libstring_search (content_txt, position, close);
 //printf ("\n4------- name: +%s+ close: +%s+ pos: %ld", name, close, close_pos);
 
 		sibling_pos = position + close_pos + name_length + 3;
@@ -533,7 +548,7 @@ printf ("\n****%s****", aux);
 		long next_tag;
 		long next_close;
 		next_tag = libxml_find_next_tag (content_txt, sibling_pos);
-		next_close = libstring_search (content_txt + sibling_pos, "</");
+		next_close = libstring_search (content_txt, sibling_pos, "</");
 //printf ("\n4------- next_tag: %ld next_close: %ld", next_tag, next_close);
 
 		if (next_tag < 0)
@@ -585,8 +600,8 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 		while (content_txt [position] == ' ') 	
 			position++;
 
-		offset = libstring_search (content_txt + position, "=");
-		offset_aux = libstring_search (content_txt + position, ">");
+		offset = libstring_search (content_txt, position, "=");
+		offset_aux = libstring_search (content_txt, position, ">");
 		
 		if ((offset_aux <= offset) || (offset < 0))
 		{
@@ -618,9 +633,9 @@ xml_attribute_t * libxml_parse_tag_attribute (char * content_txt, long position,
 			length = libstring_subset (content_txt, position, offset, name);
 
 			position = position + length + 1;
-			offset = libstring_search (content_txt + position, "\"");
+			offset = libstring_search (content_txt, position, "\"");
 			position = position + offset + 1;
-			offset = libstring_search (content_txt + position, "\"");
+			offset = libstring_search (content_txt, position, "\"");
 
 			char * value = (char *) malloc (offset * sizeof (char));
 			length = libstring_subset (content_txt, position, offset, value);
@@ -674,18 +689,18 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 
 //printf("\n%s", instruction);
 
-	offset = libstring_search (instruction + position, "<?");
+	offset = libstring_search (instruction, position, "<?");
 	position = position + libstring_length ("<?");
 	
-	offset = libstring_search (instruction + position, " ");
-	offset_aux = libstring_search (instruction + position, "?>");
+	offset = libstring_search (instruction, position, " ");
+	offset_aux = libstring_search (instruction, position, "?>");
 	if (offset_aux <= offset)
 	{
 		printf ("\nLibXML: Error parsing instruction. No instructions");
 		return NULL;
 	}
 
-	offset = libstring_search (instruction + position, "xml");
+	offset = libstring_search (instruction, position, "xml");
 	position = position + libstring_length ("xml");
 	if (offset != 0)
 	{
@@ -698,8 +713,8 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 		while (instruction [position] == ' ') 	
 			position++;
 
-		offset = libstring_search (instruction + position, "=");
-		offset_aux = libstring_search (instruction + position, "?>");
+		offset = libstring_search (instruction, position, "=");
+		offset_aux = libstring_search (instruction, position, "?>");
 		
 		if ((offset_aux <= offset) || (offset < 0))
 		{
@@ -728,9 +743,9 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 			length = libstring_subset (instruction, position, offset, name);
 
 			position = position + length + 1;
-			offset = libstring_search (instruction + position, "\"");
+			offset = libstring_search (instruction, position, "\"");
 			position = position + offset + 1;
-			offset = libstring_search (instruction + position, "\"");
+			offset = libstring_search (instruction, position, "\"");
 
 			char * value = (char *) malloc (offset * sizeof (char));
 			length = libstring_subset (instruction, position, offset, value);

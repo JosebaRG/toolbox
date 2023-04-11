@@ -70,20 +70,30 @@ long libstring_search (char * text, long offset, char * searched)
 	if (length_s > length_t)
 		return -1;
 
+	char auxiliar [100];
+	libstring_subset (text, offset, 100, auxiliar);
+	//printf ("\n\n+++++++++++++++++++++++++++++++++ LIBSTRING SEARCH +++++++++++++");
+	//printf ("\noffset: %ld", offset);
+	//printf ("\nsearch: +>%s<+\nsearch: +>%s<+\n", auxiliar, searched);
+
 	char aux [length_s];
-	strcpy(aux, "\0");
-	char * ptr_aux = aux;
+	//strcpy(aux, "\0");
+	//char * ptr_aux = aux;
 
 	long position = 0;
 	
-	while (text [ofsset + position] != '\0')
+	while (text [offset + position] != '\0')
 	{
-		libstring_subset(text, position, length_s, ptr_aux);
-		//printf("\n++ %s - %s", ptr_aux, searched);
-		if (strcmp(ptr_aux, searched) == 0)
+		libstring_subset(text, position, length_s, aux);
+		//printf("\n++%ld: %s - %s", position, aux, searched);
+		if (strcmp(aux, searched) == 0)
+		{
+			//printf ("\n*********** Encontrado en: %ld", position);
 			return position;
+		}
 		position ++;
 	}
+	//printf ("\n********** NO ENCONTRADO");
 
 	return -1;
 }
