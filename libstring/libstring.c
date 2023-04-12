@@ -59,6 +59,21 @@ long libstring_replace (char * text, long offset, char * replace)
 	return replaced;
 }
 
+int libstring_compare (char * a, char * b)
+{
+	long length_a = libstring_length(a);
+	long length_b = libstring_length(b);
+
+	if (length_a != length_b)
+		return -1;
+
+	for (long i=0; i<length_a; i++)
+		if (a [i] != b [i])
+			return -1;
+
+	return 0;
+}
+
 long libstring_search (char * text, long offset, char * searched)
 {
 	long length_t = libstring_length(text + offset);
@@ -67,23 +82,32 @@ long libstring_search (char * text, long offset, char * searched)
 	if (length_s > length_t)
 		return -1;
 
-	char * ptr_aux;
+	char * ptr_aux = NULL;
 	ptr_aux = (char *) malloc ((length_s) * sizeof (char));
 
+	if (ptr_aux == NULL)
+	{
+		printf ("\nLIBSTRING: Error on malloc from search");
+	}
+
 	long position = 0;
-	
+
+printf ("\n//////////\n\tBuscado: +>%s<+\nTexto: +>%s<+", searched, text);	
 	while (text [offset + position] != '\0')
 	{
-		libstring_subset(text, position, length_s, ptr_aux);
+		libstring_subset(text, offset + position, length_s, ptr_aux);
+printf ("\n++ ->%s<- ->%s<-", ptr_aux, searched);
 		if (strcmp(ptr_aux, searched) == 0)
 		{
 			free (ptr_aux);
-			return position;
+printf ("\n\tFOUND\n//////////");
+			return offset + position;
 		}
 		position ++;
 	}
 
 	free (ptr_aux);
+printf ("\n\tNOT FOUND\n//////////");
 	return -1;
 }
 

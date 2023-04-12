@@ -2,7 +2,7 @@
 #include <limits.h>
 #include <stdio.h>
 
-#include "libxml.h"
+#include "libjxml.h"
 #include "libstring.h"
 
 /*********************************************************************************
@@ -78,7 +78,7 @@ xml_t * libxml_xml_to_mem (char * xml_txt)
 
 	xml_mem_t = libxml_init_xml_mem (xml_txt);
 	xml_mem_t->instruction_t = libxml_parse_instruction (xml_txt);
-	xml_mem_t->content_t = libxml_parse_content (xml_txt);
+	//xml_mem_t->content_t = libxml_parse_content (xml_txt);
 
 	return xml_mem_t;
 }
@@ -322,7 +322,7 @@ char * libxml_read_instruction (char * xml_txt)
 	inst_end    = libstring_search (xml_txt, 0, "?>");
 
 	int bracket_len;
-	bracket_len = libstring_length ("?>1");
+	bracket_len = libstring_length ("?>");
 	inst_length = inst_end - inst_start + bracket_len; // two characters extra for "?>"
 
 	if (inst_end <= inst_start)
@@ -691,10 +691,10 @@ xml_attribute_t * libxml_parse_instruction (char * xml_txt)
 
 	char * instruction;
 	instruction = libxml_read_instruction (xml_txt);
-printf ("\n*********** UNO");
+	
 	offset = libstring_search (instruction, position, "<?");
 	position = position + libstring_length ("<?");
-printf ("\n*********** DOS");
+
 	offset = libstring_search (instruction, position, " ");
 	offset_aux = libstring_search (instruction, position, "?>");
 	if (offset_aux <= offset)
@@ -704,12 +704,13 @@ printf ("\n*********** DOS");
 	}
 
 	offset = libstring_search (instruction, position, "xml");
-	position = position + libstring_length ("xml");
-	if (offset != 0)
+	if (offset != libstring_length ("<?"))
 	{
 		printf ("\nLibXML: Error parsing instruction. No xml begining");
 		return NULL;
 	}
+
+	position = libstring_length ("<?xml");
 
 	while (1)
 	{
@@ -740,7 +741,8 @@ printf ("\n*********** DOS");
 				attribute_last_t = attribute_last_t->next_attribute_t;
 			}			
 			
-			char * name = (char *) malloc (offset * sizeof (char));
+			char * name;
+			name = (char *) malloc (offset * sizeof (char));
 // cambiar esto por un assert
 			if (name == NULL) 
 			{
@@ -757,7 +759,8 @@ printf ("\n*********** DOS");
 			position = position + offset + 1;
 			offset = libstring_search (instruction, position, "\"");
 
-			char * value = (char *) malloc (offset * sizeof (char));
+			char * value;
+			value = (char *) malloc (offset * sizeof (char));
 			length = libstring_subset (instruction, position, offset, value);
 			position = position + offset + 1;
 

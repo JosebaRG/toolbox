@@ -42,6 +42,12 @@ long libstring_replace (char * text, long offset, char * replace);
 
 /** 
  *
+ * @return 0 if equal and -1 if differents
+ */
+int libstring_compare (char * a, char * b);
+
+/** 
+ *
  * @return the position of text where searched string begins
  */
 long libstring_search (char * text, long offset, char * searched);
