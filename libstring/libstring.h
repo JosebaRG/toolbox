@@ -38,13 +38,13 @@ long libstring_subset (char * text, long offset, long length, char * subset);
  *
  * @return number of replaced char elements
  */
-long libstring_replace (char * text, char * replace, long offset);
+long libstring_replace (char * text, long offset, char * replace);
 
 /** 
  *
  * @return the position of text where searched string begins
  */
-long libstring_search (char * text, char * searched);
+long libstring_search (char * text, long offset, char * searched);
 
 /** 
  *
