@@ -4,11 +4,8 @@ long libstring_length (char * text)
 {
 	long length = 0;
 
-	while (text[0] != '\0')
-	{
+	while (text [length] != '\0')
 		length++;
-		text++;
-	}
 		
 	return length;
 }
@@ -42,7 +39,7 @@ long libstring_subset (char * text, long offset, long length, char * subset)
 
 	subset [copied] = '\0';
 
-	return copied ;
+	return copied;
 }
 
 long libstring_replace (char * text, long offset, char * replace)
@@ -70,31 +67,23 @@ long libstring_search (char * text, long offset, char * searched)
 	if (length_s > length_t)
 		return -1;
 
-	char auxiliar [100];
-	libstring_subset (text, offset, 100, auxiliar);
-	//printf ("\n\n+++++++++++++++++++++++++++++++++ LIBSTRING SEARCH +++++++++++++");
-	//printf ("\noffset: %ld", offset);
-	//printf ("\nsearch: +>%s<+\nsearch: +>%s<+\n", auxiliar, searched);
-
-	char aux [length_s];
-	//strcpy(aux, "\0");
-	//char * ptr_aux = aux;
+	char * ptr_aux;
+	ptr_aux = (char *) malloc ((length_s) * sizeof (char));
 
 	long position = 0;
 	
 	while (text [offset + position] != '\0')
 	{
-		libstring_subset(text, position, length_s, aux);
-		//printf("\n++%ld: %s - %s", position, aux, searched);
-		if (strcmp(aux, searched) == 0)
+		libstring_subset(text, position, length_s, ptr_aux);
+		if (strcmp(ptr_aux, searched) == 0)
 		{
-			//printf ("\n*********** Encontrado en: %ld", position);
+			free (ptr_aux);
 			return position;
 		}
 		position ++;
 	}
-	//printf ("\n********** NO ENCONTRADO");
 
+	free (ptr_aux);
 	return -1;
 }
 
@@ -211,7 +200,7 @@ void main()
 	
 	long searched_pos = 0;
 
-	searched_pos = libstring_search(pr_A, pr_B);
+	searched_pos = ibstring_search(pr_A, pr_B);
 
 	printf("\nSearch --> %ld", searched_pos);
 
