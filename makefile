@@ -35,7 +35,7 @@ D-XML = ./libxml
 DEPS = \
 	$(D-STR)/libstring.h \
 	\
-	$(D-XML)/libxml.h
+	$(D-XML)/libjxml.h
 
 
 
@@ -43,7 +43,7 @@ DEPS = \
 SRC  = \
 	libstring.c \
 	\
-	libxml.c
+	libjxml.c
 
 # LIST OF OBJECT FILES
 OBJ = $(patsubst %.c,$(D-OBJ)/%.o,$(SRC))
@@ -75,7 +75,7 @@ $(D-OBJ)/libstring.o: $(D-STR)/libstring.c $(DEPS)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
 
 # LIBXML
-$(D-OBJ)/libxml.o: $(D-XML)/libxml.c $(DEPS)
+$(D-OBJ)/libjxml.o: $(D-XML)/libjxml.c $(DEPS)
 	mkdir -p $(D-OBJ)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
 

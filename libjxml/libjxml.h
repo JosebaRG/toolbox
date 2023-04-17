@@ -26,10 +26,10 @@ typedef struct xml_tag_t
 	struct xml_tag_t       * sibling_tag_t;
 }xml_tag_t;
 
-int libxml_free_xml_mem   (xml_t * xml_mem_t);
-xml_t * libxml_xml_to_mem  (char  * xml_txt);
-xml_t * libxml_file_to_mem (char  * xml_name);
-FILE  * libxml_mem_to_file (xml_t * xml_mem_t, 
+int libjxml_free_xml_mem   (xml_t * xml_mem_t);
+xml_t * libjxml_xml_to_mem  (char  * xml_txt);
+xml_t * libjxml_file_to_mem (char  * xml_name);
+FILE  * libjxml_mem_to_file (xml_t * xml_mem_t, 
 							char * xml_name,
 							bool close);
 
