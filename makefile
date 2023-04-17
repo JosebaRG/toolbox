@@ -25,7 +25,7 @@ LDIR = ./lib
 # TARGET, OBJECT, SOURCE, FUNCTIONS, PLATFORM
 D-OBJ = ./obj
 D-STR = ./libstring
-D-XML = ./libxml
+D-XML = ./libjxml
 
 ####################
 # ELEMENTS
