@@ -351,7 +351,7 @@ char * libjxml_read_content (char * xml_txt)
 		printf ("\nLibXML: Error reading content. Instruction detected.");
 		return NULL;
 	}
-	return xml_txt + main_start - 1;
+	return xml_txt + (main_start - libstring_length ("<"));
 }
 
 long libjxml_find_next_tag (char * content_txt, long position)
@@ -398,9 +398,11 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 	long slash;
 	long small = LONG_MAX;  // Maximum possible value for long
 
-	blank   = libstring_search (content_txt, position + 1, " ");
-	bracket = libstring_search (content_txt, position + 1, ">");
-	slash   = libstring_search (content_txt, position + 1, "/>");
+	position = position + libstring_length ("<");
+
+	blank   = libstring_search (content_txt, position, " ");
+	bracket = libstring_search (content_txt, position, ">");
+	slash   = libstring_search (content_txt, position, "/>");
 
 	if ((blank > 0) && (blank < small))
         small = blank;
@@ -414,9 +416,9 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 	if ((small > 0) && (small < LONG_MAX))
 	{
 		long length;
-		length = small - (position + 1);
+		length = small - position;
 		name = (char *) malloc (length * sizeof (char));
-		libstring_subset (content_txt, position + 1, length, name);
+		libstring_subset (content_txt, position, length, name);
 	}
 	else
 		printf ("\nLIBXML: Error parsing tag name");
