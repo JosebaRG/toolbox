@@ -734,7 +734,9 @@ xml_attribute_t * libxmls_parse_instruction (char * instruction)
 			{
 				attribute_last_t->next_attribute_t = attribute_aux_t;
 				attribute_last_t = attribute_last_t->next_attribute_t;
-			}			char * name = (char *) malloc (offset * sizeof (char));
+			}			
+
+			char * name = (char *) malloc (offset * sizeof (char));
 			if (name == NULL)
 			{
 				printf ("\nLibXML: Error malloc");

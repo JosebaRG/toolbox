@@ -92,22 +92,22 @@ long libstring_search (char * text, long offset, char * searched)
 
 	long position = 0;
 
-printf ("\n//////////\n\tBuscado: +>%s<+\nTexto: +>%s<+", searched, text);	
+//printf ("\n//////////\n\tBuscado: +>.%s.<+\nTexto: +>.%s.<+", searched, text);	
 	while (text [offset + position] != '\0')
 	{
 		libstring_subset(text, offset + position, length_s, ptr_aux);
-printf ("\n++ ->%s<- ->%s<-", ptr_aux, searched);
+//printf ("\n++ ->.%s.<- ->.%s.<-", ptr_aux, searched);
 		if (strcmp(ptr_aux, searched) == 0)
 		{
 			free (ptr_aux);
-printf ("\n\tFOUND\n//////////");
+//printf ("\n\tFOUND\n//////////");
 			return offset + position;
 		}
 		position ++;
 	}
 
 	free (ptr_aux);
-printf ("\n\tNOT FOUND\n//////////");
+//printf ("\n\tNOT FOUND\n//////////");
 	return -1;
 }
 
