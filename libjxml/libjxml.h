@@ -1,11 +1,10 @@
 /**
  * @file libjxml.h
  *
- * @brief A brief description of the purpose of this file.
+ * @brief Library to work with xml files.
  *
- * A more detailed description of the file and its contents can be added here.
- * This could include information on the author, date, version, or any other
- * relevant details.
+ * A structure tree is defined to store an XML file in memory. This library provides
+ * functions to convert the XML file into the tree structure and vice versa.
  *
  * @author Joseba R.G.
  *         joseba.rg@protonmail.com
