@@ -13,9 +13,10 @@
  *         joseba.rg@protonmail.com
  */
 
-#include "libassert.h"
-
+#include <stddef.h>
 #include <assert.h>
+
+#include "libassert.h"
 
 void libassert_ptr (void * ptr)
 {

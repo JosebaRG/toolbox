@@ -85,7 +85,7 @@ $(D-OBJ)/libjxml.o: $(D-XML)/libjxml.c $(DEPS)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
 
 # LIBASSERT
-$(D-ASR)/libassert.o: $(D-ASR)/libassert.c $(DEPS)
+$(D-OBJ)/libassert.o: $(D-ASR)/libassert.c $(DEPS)
 	mkdir -p $(D-OBJ)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
 
