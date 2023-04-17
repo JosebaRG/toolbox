@@ -15,7 +15,7 @@ DEBUG = 3
 
 # MAIN CONFIGURATION
 COMPILER = gcc
-CFLAGS = -I$(D-STR) -I$(D-XML)
+CFLAGS = -I$(D-STR) -I$(D-XML) -I$(D-ASR)
 
 # EXTERNAL LIBRARIES IF NEEDED
 LIBS = # -lm
@@ -26,6 +26,7 @@ LDIR = ./lib
 D-OBJ = ./obj
 D-STR = ./libstring
 D-XML = ./libjxml
+D-ASR = ./libassert
 
 ####################
 # ELEMENTS
@@ -35,7 +36,9 @@ D-XML = ./libjxml
 DEPS = \
 	$(D-STR)/libstring.h \
 	\
-	$(D-XML)/libjxml.h
+	$(D-XML)/libjxml.h \
+	\
+	$(D-ASR)/libassert.h
 
 
 
@@ -43,7 +46,9 @@ DEPS = \
 SRC  = \
 	libstring.c \
 	\
-	libjxml.c
+	libjxml.c \
+	\
+	libassert.c
 
 # LIST OF OBJECT FILES
 OBJ = $(patsubst %.c,$(D-OBJ)/%.o,$(SRC))
@@ -78,6 +83,12 @@ $(D-OBJ)/libstring.o: $(D-STR)/libstring.c $(DEPS)
 $(D-OBJ)/libjxml.o: $(D-XML)/libjxml.c $(DEPS)
 	mkdir -p $(D-OBJ)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
+
+# LIBASSERT
+$(D-ASR)/libassert.o: $(D-ASR)/libassert.c $(DEPS)
+	mkdir -p $(D-OBJ)
+	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
+
 
 ####################
 # HELP
