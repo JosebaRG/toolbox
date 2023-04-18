@@ -18,7 +18,13 @@
 
 #include "libassert.h"
 
-void libassert_ptr (void * ptr)
+void libassert_assert ()
 {
-	assert(ptr != NULL);
+#ifdef LIBASSERT_ASSERT
+	assert (0);
+#endif //LIBASSERT_ASSERT
+
+#ifdef LIBASSERT_LOOP
+	do {} while (1);
+#endif //LIBASSERT_LOOP
 }

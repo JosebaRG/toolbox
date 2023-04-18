@@ -16,20 +16,56 @@
 #ifndef _LIBASSERT_H
 #define _LIBASSERT_H
 
+#include <stdio.h>
+
+/*********************************************************************************
+ *                                   DEFINITIONS
+ *********************************************************************************/
+
+//#define LIBASSERT_ASSERT
+//#define LIBASSERT_LOOP
+
+#define LIBASSERT_MAX_LINE 100
+/**
+ * sprintf (msg, "%s %s - %20s : %25s : %4d", __DATE__,__TIME__, __FILE__, __func__, __LINE__); \
+ * __DATE__ 11 chars
+ * __TIME__  8 chars
+ * __FILE__ 20 chars
+ * __func__ 30 chars
+ * __LINE__  4 chars
+ * extra    10 chars
+ * TOTAL    83 chars
+ */
+
+#define LIBASSERT_PTR(ptr) \
+    do \
+	{ \
+		if (ptr == NULL) \
+		{ \
+			char msg [100]; \
+			sprintf (msg, "%s %s - %s(%d):%s - POINTER ASSERT ERROR", __DATE__,__TIME__, __FILE__, __LINE__, __func__); \
+			printf ("\n%s", msg); \
+			libassert_assert (); \
+		} \
+    } while (0)
+
 /*********************************************************************************
  *                                      API
  *********************************************************************************/
 
 /**
- * @brief Check if a pointer is not NULL.
+ * @brief Asserts or loops depending on which macros are defined.
  *
- * This function is for checking pointer integrity. If the pointer is NULL,
- * the assert will fail and the program will terminate.
+ * This function checks if certain macros are defined and performs an action accordingly.
  *
- * @param[in] ptr The pointer to be checked.
- * @return This function does not return a value.
+ * If the macro LIBASSERT_ASSERT is defined, it calls the assert function, which will
+ * cause the program to terminate with an error message.
+ *
+ * If the macro LIBASSERT_LOOP is defined, it enters an infinite loop using a do-while.
+ * 
+ * @note SHOULD NOT be called directly. Its purpose is to be called from macros.
  */
-void libassert_ptr (void * ptr);
+void libassert_assert ();
 
 #endif //_LIBASSERT_H
 
