@@ -59,6 +59,8 @@ If you find a bug or have an enhancement request, please open an issue. If you w
 ### 4.- License
 This Git repository contains my personal libraries and is licensed under the Creative Commons Non-Commercial (CC BY-NC) license. This means that while you are free to use and modify these libraries for non-commercial purposes, you must give me credit as the original author and cannot use them for commercial purposes without my permission.
 
+---
+
 ### 5.-Author
 
 - Name: Joseba RG
