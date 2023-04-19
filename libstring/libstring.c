@@ -1,3 +1,16 @@
+/**
+ * @file libstring.c
+ *
+ * @brief Library to work with strings.
+ *
+ * This library was created to simplify working with strings in C. 
+ * The implemented functions aim to provide similar functionality
+ * to that obtained in LabVIEW.
+ *
+ * @author Joseba R.G.
+ *         joseba.rg@protonmail.com
+ */
+
 #include "libstring.h"
 
 long libstring_length (char * text)
@@ -12,19 +25,19 @@ long libstring_length (char * text)
 
 long libstring_concat (char * text_a, char * text_b)
 {
-	long length_a = libstring_length(text_a);
-	long length_b = libstring_length(text_b);
+	long length_a = libstring_length (text_a);
+	long length_b = libstring_length (text_b);
 	long pos = 0;
 
 	while (length_b >= 0)
 	{
-		text_a[length_a] = text_b[pos];
+		text_a [length_a] = text_b [pos];
 		length_a++;
 		length_b--;
 		pos++;
 	}
 
-	return pos-1;
+	return pos - 1;
 }
 
 long libstring_subset (char * text, long offset, long length, char * subset)
@@ -69,7 +82,7 @@ int libstring_compare (char * a, char * b)
 
 	for (long i=0; i<length_a; i++)
 		if (a [i] != b [i])
-			return -1;
+			return - 1;
 
 	return 0;
 }
@@ -92,23 +105,18 @@ long libstring_search (char * text, long offset, char * searched)
 
 	long position = 0;
 
-//printf ("\n//////////\n\tBuscado: +>.%s.<+\nTexto: +>.%s.<+", searched, text);	
 	while (text [offset + position] != '\0')
 	{
 		libstring_subset(text, offset + position, length_s, ptr_aux);
-//printf ("\n++ ->.%s.<- ->.%s.<-", ptr_aux, searched);
-		if (strcmp(ptr_aux, searched) == 0)
 		{
 			free (ptr_aux);
-//printf ("\n\tFOUND\n//////////");
 			return offset + position;
 		}
 		position ++;
 	}
 
 	free (ptr_aux);
-//printf ("\n\tNOT FOUND\n//////////");
-	return -1;
+	return - 1;
 }
 
 match_pattern_t libstring_match_pattern (char * string, char * match)
@@ -157,6 +165,10 @@ match_pattern_t libstring_free_matched (match_pattern_t matched_t)
 
 	return matched_t;
 }
+
+/*********************************************************************************
+ *                                  TESTS
+ *********************************************************************************/
 
 #ifdef BASURA
 void main()

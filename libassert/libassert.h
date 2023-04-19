@@ -37,6 +37,16 @@
  * TOTAL    83 chars
  */
 
+/**
+ * @def LIBASSERT_PTR
+ * 
+ * @brief Macro to check the integrity of a pointer.
+ *
+ * This macro checks if a pointer is NULL. If it is, an error message is printed,
+ * and the assert macro is called.
+ * 
+ * @param[in] ptr A pointer to be checked.
+ */
 #define LIBASSERT_PTR(ptr) \
     do \
 	{ \
