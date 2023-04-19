@@ -132,7 +132,7 @@ long libstring_search (char * text, long offset, char * searched);
  * including the portion of the string before and after the match, the match itself,
  * and the offset of the match.
  */
-//match_pattern_t libstring_match_pattern (char * string, char * match);
+match_pattern_t libstring_match_pattern (char * string, char * match);
 
 /**
  * @brief Frees the memory used by a match_pattern_t struct.
@@ -145,7 +145,6 @@ long libstring_search (char * text, long offset, char * searched);
  *
  * @return The match_pattern_t struct with its members set to NULL.
  */
-//match_pattern_t libstring_free_matched (match_pattern_t matched_t);
-
+match_pattern_t libstring_free_matched (match_pattern_t matched_t);
 
 #endif //_LIBSTRING_H

@@ -8,9 +8,9 @@ This project is a Git repository that contains several generic libraries to simp
 
 ## 1.- Getting Started
 
-This libraries can be downloades with the next command.
+This libraries can be downloaded with the next command:
 
-```properties
+```bash
 $ git clone git@github.com:JosebaRG/toolbox.git
 ```
 
@@ -18,7 +18,7 @@ $ git clone git@github.com:JosebaRG/toolbox.git
 
 ## 2.- Libraries
 
-### 2.1.- Libstring
+### 2.1.- LibString
 
 This library written in C was created to simplify working with strings in C. The implemented functions aim to provide similar functionality to that obtained in LabVIEW.
 
@@ -28,7 +28,7 @@ Library can be included in C with:
 #include "libstring.h"
 ```
 
-### 2.2.- Libjxml
+### 2.2.- LibJXml
 
 This library written in C defindes a structure tree to store an XML file in memory. This library provides functions to convert the XML file into the tree structure and vice versa.
 
@@ -38,7 +38,7 @@ Library can be included in C with:
 #include "libjxml.h"
 ```
 
-### 2.3.-Libassert
+### 2.3.-LibAssert
 
 This library written in C provides a collection of functions that use the assert() macro to check the integrity of their input parameters. By including this library in one project, it can easily incorporate parameter checking into the code without having to write your specific custom error-checking code.
 

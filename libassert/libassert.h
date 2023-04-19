@@ -78,4 +78,3 @@
 void libassert_assert ();
 
 #endif //_LIBASSERT_H
-
