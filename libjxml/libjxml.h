@@ -25,31 +25,31 @@
  */
 typedef struct xml_t
 {
-    struct xml_attribute_t * instruction_t; /**< Pointer to the XML instruction */
-    struct xml_tag_t       * content_t;     /**< Pointer to the first XML tag in the list */
-} xml_t;
+	struct xml_attribute_t * instruction_t; /**< Pointer to the XML instruction */
+	struct xml_tag_t       * content_t;     /**< Pointer to the first XML tag in the list */
+}xml_t;
 
 /**
  * @brief The structure representing a single XML attribute.
  */
 typedef struct xml_attribute_t
 {
-    char * name;                                /**< The name of the attribute */
-    char * value;                               /**< The value of the attribute */
-    struct xml_attribute_t * next_attribute_t;  /**< Pointer to the next attribute in the list */
-} xml_attribute_t;
+	char * name;                                /**< The name of the attribute */
+	char * value;                               /**< The value of the attribute */
+	struct xml_attribute_t * next_attribute_t;  /**< Pointer to the next attribute in the list */
+}xml_attribute_t;
 
 /**
  * @brief The structure representing an XML tag.
  */
 typedef struct xml_tag_t
 {
-    char * name;                            /**< The name of the tag */
-    char * value;                           /**< The value of the tag */
-    struct xml_attribute_t * attribute_t;   /**< Pointer to the first attribute in the list */
-    struct xml_tag_t       * nested_tag_t;  /**< Pointer to the first nested tag in the list */
-    struct xml_tag_t       * sibling_tag_t; /**< Pointer to the next sibling tag */
-} xml_tag_t;
+	char * name;                            /**< The name of the tag */
+	char * value;                           /**< The value of the tag */
+	struct xml_attribute_t * attribute_t;   /**< Pointer to the first attribute in the list */
+	struct xml_tag_t       * nested_tag_t;  /**< Pointer to the first nested tag in the list */
+	struct xml_tag_t       * sibling_tag_t; /**< Pointer to the next sibling tag */
+}xml_tag_t;
 
 /*********************************************************************************
  *                                      API

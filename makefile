@@ -23,7 +23,7 @@ LDIR = ./lib
 
 # COMPILATION PATHS
 # TARGET, OBJECT, SOURCE, FUNCTIONS, PLATFORM
-D-OBJ = ./obj
+D-OBJ = ./.obj
 D-STR = ./libstring
 D-XML = ./libjxml
 D-ASR = ./libassert

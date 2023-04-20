@@ -281,7 +281,7 @@ char * libjxml_read (FILE * xml_file, long xml_length)
 
 	char * xml;
 	xml = (char *) malloc (xml_length * sizeof (char));
-	libassert_ptr (xml);
+	LIBASSERT_PTR (xml);
 	read_len = fread (xml, sizeof (char), xml_length, xml_file);
 	
 	if (read_len == xml_length)
@@ -343,7 +343,7 @@ char * libjxml_read_instruction (char * xml_txt)
 		return NULL;
 	
 	instruction = (char *) malloc (inst_length * sizeof (char));
-	libassert_ptr (instruction);
+	LIBASSERT_PTR (instruction);
 	libstring_subset (xml_txt, inst_start, inst_length, instruction);
 	
 	return instruction;
@@ -394,7 +394,7 @@ char * libjxml_create_close_tag (char * name)
 	length = name_length + bracket_len;
 	char * close;
 	close = (char *) malloc (length * sizeof (char));
-	libassert_ptr (close);
+	LIBASSERT_PTR (close);
 
 	close[0] = '<';
 	close[1] = '/';
@@ -434,7 +434,7 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 		long length;
 		length = small - position;
 		name = (char *) malloc (length * sizeof (char));
-		libassert_ptr (name);
+		LIBASSERT_PTR (name);
 		libstring_subset (content_txt, position, length, name);
 	}
 	else
@@ -475,7 +475,7 @@ char * libjxml_parse_tag_value (char * content_txt, long position, char * name)
 			if (length > 0)
 			{
 				value = (char *) malloc (length * sizeof (char));
-				libassert_ptr (value);
+				LIBASSERT_PTR (value);
 				libstring_subset (content_txt, start_pos, length, value);
 				value = libjxml_check_empty (value);
 				printf ("\n>>>%s has tag value: -%s-", name, value);
@@ -531,7 +531,7 @@ xml_tag_t * libjxml_parse_tag_nested (char * content_txt, long position, char * 
 			length = position + next_tag;
 			printf ("\n%s has nested on %ld", name, length);
 			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-			libassert_ptr (tag_t);
+			LIBASSERT_PTR (tag_t);
 
 			libjxml_parse_tag (content_txt, next_tag, tag_t);
 		}
@@ -599,7 +599,7 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 		if (next_tag < next_close)
 		{
 			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-			libassert_ptr (tag_t);
+			LIBASSERT_PTR (tag_t);
 			printf ("\n%s has sibling on %ld", name, next_tag);
 			libjxml_parse_tag (content_txt, next_tag, tag_t);
 			printf("\n\nSibling:%s", content_txt + next_tag);
@@ -643,7 +643,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 		{
 			xml_attribute_t * attribute_aux_t;
 			attribute_aux_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
-			libassert_ptr (attribute_aux_t);
+			LIBASSERT_PTR (attribute_aux_t);
 			
 			if (attribute_t == NULL)
 				attribute_t = attribute_aux_t;
@@ -659,7 +659,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 			length = offset - position;
 			char * name;
 			name = (char *) malloc (length * sizeof (char));
-			libassert_ptr (name);
+			LIBASSERT_PTR (name);
 			length = libstring_subset (content_txt, position, length, name);
 
 			position = offset + libstring_length ("=");
@@ -670,7 +670,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 			length = offset - position;
 			char * value;
 			value = (char *) malloc (offset * sizeof (char));
-			libassert_ptr (value);
+			LIBASSERT_PTR (value);
 			length = libstring_subset (content_txt, position, length, value);
 			position = offset + libstring_length ("\"");
 
@@ -700,7 +700,7 @@ xml_tag_t * libjxml_parse_content (char * xml_txt)
 	content_txt = libjxml_read_content (xml_txt);
 	position = libjxml_find_next_tag (content_txt, position);
 	content_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-	libassert_ptr (content_t);
+	LIBASSERT_PTR (content_t);
 
 	libjxml_parse_tag (content_txt, position, content_t);
 	
@@ -757,7 +757,7 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 		{
 			xml_attribute_t * attribute_aux_t;
 			attribute_aux_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
-			libassert_ptr (attribute_aux_t);
+			LIBASSERT_PTR (attribute_aux_t);
 			
 			if (attribute_t == NULL)
 				attribute_t = attribute_aux_t;
@@ -773,7 +773,7 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 			length = offset - position;
 			char * name;
 			name = (char *) malloc (length * sizeof (char));
-			libassert_ptr (name);
+			LIBASSERT_PTR (name);
 
 			length = libstring_subset (instruction, position, length, name);
 
@@ -785,7 +785,7 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 			length = offset - position;
 			char * value;
 			value = (char *) malloc (offset * sizeof (char));
-			libassert_ptr (value);
+			LIBASSERT_PTR (value);
 
 			length = libstring_subset (instruction, position, length, value);
 			position = offset + libstring_length ("\"");
@@ -804,7 +804,7 @@ xml_t * libjxml_init_xml_mem (char * xml_txt)
 {
 	xml_t * xml_mem_t;
 	xml_mem_t = (xml_t *) malloc (sizeof (xml_t));
-	libassert_ptr (xml_mem_t);
+	LIBASSERT_PTR (xml_mem_t);
 
 	xml_mem_t->instruction_t = NULL;
 	xml_mem_t->content_t = NULL;

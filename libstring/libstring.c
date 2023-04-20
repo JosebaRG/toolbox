@@ -108,6 +108,7 @@ long libstring_search (char * text, long offset, char * searched)
 	while (text [offset + position] != '\0')
 	{
 		libstring_subset(text, offset + position, length_s, ptr_aux);
+		if (strcmp(ptr_aux, searched) == 0)
 		{
 			free (ptr_aux);
 			return offset + position;
