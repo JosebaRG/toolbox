@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdio.h>
+#include <ctype.h>
 
 #include "libjxml.h"
 #include "libstring.h"
@@ -35,6 +36,8 @@ FILE * libjxml_close (FILE * xml_file);
 long libjxml_length (FILE * xml_file);
 char * libjxml_read (FILE * xml_file, long xml_length);
 
+long libjxml_advance_spaces (char * text, long position);
+long libjxml_search_space (char * text, long position);
 char * libjxml_check_empty (char * element);
 char * libjxml_read_instruction (char * xml_txt);
 char * libjxml_read_content (char * xml_txt);
@@ -166,7 +169,7 @@ void libjxml_write_attribute (FILE * xml_file, xml_attribute_t * attribute_t)
 	if (attribute_t != NULL)
 	{
 		fprintf (xml_file, " %s=\"%s\"", attribute_t->name, attribute_t->value);
-		
+
 		libjxml_write_attribute (xml_file, attribute_t->next_attribute_t);
 	}
 }
@@ -300,6 +303,55 @@ char * libjxml_read (FILE * xml_file, long xml_length)
  *                                PARSE FUNCTIONS
  *********************************************************************************/
 
+long libjxml_advance_spaces (char * text, long position)
+{
+	while (isspace (text [position]) != 0)
+		position++;
+	return position;
+}
+
+long libjxml_search_space (char * text, long position)
+{
+	long space;
+	long newline;
+	long tab_horizontal;
+	long tab_vertical;
+	long form_feed;
+	long carriage;
+
+	long result = LONG_MAX; // Maximum possible value for long
+
+ 	space          = libstring_search (text, position, " ");
+ 	newline        = libstring_search (text, position, "\n");
+ 	tab_horizontal = libstring_search (text, position, "\t");
+ 	tab_vertical   = libstring_search (text, position, "\v");
+ 	form_feed      = libstring_search (text, position, "\f");
+ 	carriage       = libstring_search (text, position, "\r");
+
+	if ((space >= 0) && (space < result))
+		result = space;
+
+	if ((newline >= 0) && (newline < result))
+		result = newline;
+
+	if ((tab_horizontal >= 0) && (tab_horizontal < result))
+		result = tab_horizontal;
+
+	if ((tab_vertical >= 0) && (tab_vertical < result))
+		result = tab_vertical;
+
+	if ((form_feed >= 0) && (form_feed < result))
+		result = form_feed;
+
+	if ((carriage >= 0) && (carriage < result))
+		result = carriage;
+
+	if (result == LONG_MAX)
+		result = -1;
+
+	return result;
+}
+
 char * libjxml_check_empty (char * element)
 {
 	long length;
@@ -416,7 +468,7 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 
 	position = position + libstring_length ("<");
 
-	blank   = libstring_search (content_txt, position, " ");
+	blank   = libjxml_search_space (content_txt, position);
 	bracket = libstring_search (content_txt, position, ">");
 	slash   = libstring_search (content_txt, position, "/>");
 
@@ -524,7 +576,6 @@ xml_tag_t * libjxml_parse_tag_nested (char * content_txt, long position, char * 
 		close_pos = libstring_search (content_txt, start_pos, close);
 		next_tag = libjxml_find_next_tag (content_txt, start_pos);
 
-		//if (close_pos > (next_tag - start_pos))
 		if (close_pos > next_tag)
 		{
 			long length;
@@ -592,10 +643,7 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 			printf ("\n%s has no sibling (3)", name);
 			return tag_t;
 		}
-/*			
-		if (next_close > 0)
-			next_close = next_close + 1;
-*/
+
 		if (next_tag < next_close)
 		{
 			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
@@ -629,8 +677,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 
 	while (1)
 	{
-		while (content_txt [position] == ' ') 	
-			position++;
+		position = libjxml_advance_spaces (content_txt, position);
 
 		offset = libstring_search (content_txt, position, "=");
 		offset_aux = libstring_search (content_txt, position, ">");
@@ -723,7 +770,7 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 	offset = libstring_search (instruction, position, "<?");
 	position = position + libstring_length ("<?");
 
-	offset = libstring_search (instruction, position, " ");
+	offset = libjxml_search_space (instruction, position);
 	offset_aux = libstring_search (instruction, position, "?>");
 	if (offset_aux <= offset)
 	{
@@ -742,8 +789,7 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 
 	while (1)
 	{
-		while (instruction [position] == ' ') 	
-			position++;
+		position = libjxml_advance_spaces (instruction, position);
 
 		offset = libstring_search (instruction, position, "=");
 		offset_aux = libstring_search (instruction, position, "?>");
