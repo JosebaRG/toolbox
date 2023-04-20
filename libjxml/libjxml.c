@@ -307,6 +307,7 @@ long libjxml_advance_spaces (char * text, long position)
 {
 	while (isspace (text [position]) != 0)
 		position++;
+
 	return position;
 }
 
@@ -359,9 +360,12 @@ char * libjxml_check_empty (char * element)
 
 	while (length > 0)
 	{
-		if ((element [length - 1] != ' ')
-			&& (element [length - 1] != '\n')
-			&& (element [length - 1] != '\t'))
+		if ((element [length - 1] != ' ')  && 
+			(element [length - 1] != '\n') &&
+			(element [length - 1] != '\t') && 
+			(element [length - 1] != '\v') &&
+			(element [length - 1] != '\f') && 
+			(element [length - 1] != '\r'))
 		{
 			length--;
 		}
@@ -388,7 +392,7 @@ char * libjxml_read_instruction (char * xml_txt)
 	inst_end   = libstring_search (xml_txt, 0, "?>");
 
 	int bracket_len;
-	bracket_len = libstring_length ("?>");
+	bracket_len = libstring_length ("<?");
 	inst_length = inst_end - inst_start + bracket_len;
 
 	if (inst_end <= inst_start)
@@ -418,7 +422,8 @@ char * libjxml_read_content (char * xml_txt)
 		printf ("\nLibXML: Error reading content. Instruction detected.");
 		return NULL;
 	}
-	return xml_txt + (main_start - libstring_length ("<"));
+
+	return xml_txt + main_start;
 }
 
 long libjxml_find_next_tag (char * content_txt, long position)
@@ -491,7 +496,7 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 	}
 	else
 		printf ("\nLIBXML: Error parsing tag name");
-printf ("\n---Name: >.%s.<", name);
+
 	return name;
 }
 
@@ -530,25 +535,14 @@ char * libjxml_parse_tag_value (char * content_txt, long position, char * name)
 				LIBASSERT_PTR (value);
 				libstring_subset (content_txt, start_pos, length, value);
 				value = libjxml_check_empty (value);
-				printf ("\n>>>%s has tag value: -%s-", name, value);
 			}
 			else
 			{
 				printf ("\nLibXML: Error reading tag value.");
 			}
 		}
-		else
-		{
-			printf ("\n>>>%s has no tag values (2)", name);
-		}
-
 		free (close);
 	}
-	else
-	{
-		printf ("\n>>>%s has no tag values (1)", name);
-	}
-
 	return value;
 }
 
@@ -586,16 +580,7 @@ xml_tag_t * libjxml_parse_tag_nested (char * content_txt, long position, char * 
 
 			libjxml_parse_tag (content_txt, next_tag, tag_t);
 		}
-		else
-		{
-			printf ("\n%s has no nested (2)", name);
-		}
-		
 		free (close);
-	}
-	else
-	{
-		printf ("\n%s has no nested (1)", name);
 	}
 
 	return tag_t;
@@ -639,10 +624,7 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 		next_close = libstring_search (content_txt, tag_end, "</");
 
 		if (next_tag < 0)
-		{
-			printf ("\n%s has no sibling (3)", name);
 			return tag_t;
-		}
 
 		if (next_tag < next_close)
 		{
@@ -652,15 +634,8 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 			libjxml_parse_tag (content_txt, next_tag, tag_t);
 			printf("\n\nSibling:%s", content_txt + next_tag);
 		}
-		else
-		{
-			printf ("\n%s has no sibling (2)", name);
-		}
 	}
-	else
-	{
-		printf ("\n%s has no sibling (1)", name);
-	}
+
 	return tag_t;
 }
 
@@ -726,6 +701,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 			attribute_last_t->next_attribute_t = NULL;
 		}
 	}
+
 	return attribute_t;
 }
 
@@ -883,13 +859,16 @@ int main()
 	xml_t * xml_mem_t;
 	long quantity;
 
-	xml_mem_t = libjxml_file_to_mem (".ignore/example.xml");
+	do
+	{
+		xml_mem_t = libjxml_file_to_mem (".ignore/example.xml");
 	
-	libjxml_mem_to_file (xml_mem_t, ".ignore/xml_name.xml", true);
+		libjxml_mem_to_file (xml_mem_t, ".ignore/xml_name.xml", true);
 	
-	quantity = libjxml_free_xml_mem (xml_mem_t);
+		quantity = libjxml_free_xml_mem (xml_mem_t);
 
-	printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++ %ld\n\n", quantity);
+		printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++ %ld\n\n", quantity);
+	} while (1);
 
 	printf("\n");
     return 0;
