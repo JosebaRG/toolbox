@@ -51,7 +51,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 void libjxml_parse_tag (char * content_txt, long position, xml_tag_t * tag_t);
 xml_tag_t * libjxml_parse_content (char * xml_txt);
 xml_attribute_t * libjxml_parse_instruction (char * xml_txt);
-xml_t * libjxml_init_xml_mem (char * xml_txt);
+xml_t * libjxml_init_xml_mem ();
 
 void libjxml_test_atributes (xml_attribute_t * attribute_t);
 
@@ -92,7 +92,7 @@ xml_t * libjxml_xml_to_mem (char * xml_txt)
 {
 	xml_t * xml_mem_t;
 
-	xml_mem_t = libjxml_init_xml_mem (xml_txt);
+	xml_mem_t = libjxml_init_xml_mem ();
 	xml_mem_t->instruction_t = libjxml_parse_instruction (xml_txt);
 	xml_mem_t->content_t = libjxml_parse_content (xml_txt);
 
@@ -868,7 +868,7 @@ int main()
 		quantity = libjxml_free_xml_mem (xml_mem_t);
 
 		printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++ %ld\n\n", quantity);
-	} while (1);
+	} while (0);
 
 	printf("\n");
     return 0;
