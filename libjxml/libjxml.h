@@ -118,4 +118,21 @@ FILE  * libjxml_mem_to_file (xml_t * xml_mem_t,
 							 char * xml_name,
 							 bool close);
 
+/*********************************************************************************
+ *                              ONLY FOR TESTING
+ *********************************************************************************/
+
+/**
+ * @brief Tests and prints information about an XML document.
+ *
+ * This function prints information about the XML instruction, content,
+ * and prompts the user to select an option to navigate through the document.
+ *
+ * @param[in] xml_mem_t A pointer to the XML document to be tested.
+ *
+ * @note Navigation within the XML tree is only allowed in a forward direction.
+ *       It is not possible to backtrack to previous nodes.
+ */
+void libjxml_test (xml_t * xml_mem_t);
+
 #endif //_LIBJXLM_H
