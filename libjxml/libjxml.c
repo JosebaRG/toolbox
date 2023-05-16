@@ -435,7 +435,7 @@ long libjxml_find_next_tag (char * content_txt, long position)
 	content_length = libstring_length (content_txt);
 	
 	while ((content_txt [position] != '<') && (position < content_length))
-			position++;
+		position++;
 
 	if ((position >= 0) && (position < content_length))
 		return position;
