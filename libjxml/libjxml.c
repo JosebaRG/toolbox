@@ -56,7 +56,6 @@ xml_t * libjxml_init_xml_mem ();
 /* Only for testing */
 void libjxml_test_attribute (xml_attribute_t * attribute_t);
 void libjxml_test_tag (xml_tag_t * tag_t);
-void libjxml_test (xml_t * xml_mem_t);
 
 
 /*********************************************************************************
