@@ -63,6 +63,6 @@ This Git repository contains my personal libraries and is licensed under the Cre
 
 ### 5.-Author
 
-- Name: Joseba RG
+- Name: Joseba R.G.
 - Email: joseba.rg@protonmail.com
 - GitHub: https://github.com/JosebaRG
