@@ -14,7 +14,6 @@
  *         joseba.rg@protonmail.com
  */
 
-
 #include "libqueue.h"
 #include <stdlib.h>
 #include <stddef.h>
@@ -37,13 +36,64 @@ Queue_t * libqueue_create_queue (QType type)
 
 Queue_t * libqueue_delete_queue (Queue_t * queue)
 {
+	QNode_t * rm_node;
+
 	while (queue->first != NULL)
 	{
-		libqueue_remove_node (queue);
+		rm_node = queue->first;
+		queue->first = queue->first->after;
+		libqueue_remove_node (rm_node);
 	}
 }
 
+int32_t libqueue_count_nodes (Queue_t * queue)
+{
+	int32_t counter = 0;
+
+	QNode_t * aux_node;
+	aux_node = queue->first;
+
+	while (aux_node != NULL)
+	{
+		counter++;
+		aux_node = aux_node->after;
+	}
+	
+	return counter;
+}
+
 QNode_t * libqueue_add_node (Queue_t * queue, void * data)
+{
+	return libqueue_add_node_last (queue, data);
+}
+
+QNode_t * libqueue_add_node_first (Queue_t * queue, void * data)
+{
+	QNode_t * qNode;
+	qNode = (QNode_t *) malloc (sizeof (QNode_t));
+
+	queue->first->before = qNode;
+	qNode->after = queue->first;
+	
+	if (queue->type == CIRCULAR)
+	{
+		qNode->after = queue->first;
+		qNode->before = queue->last;
+		queue->last->after = qNode;
+		queue->first-> = qNode;
+	}
+	else
+		qNode->before = NULL;
+
+	queue->first = qNode;
+
+	qNode->queue = queue;
+	qNode->data = data;
+
+	return qNode;
+}
+
+QNode_t * libqueue_add_node_last (Queue_t * queue, void * data)
 {
 	QNode_t * qNode;
 	qNode = (QNode_t *) malloc (sizeof (QNode_t));
@@ -54,7 +104,9 @@ QNode_t * libqueue_add_node (Queue_t * queue, void * data)
 	if (queue->type == CIRCULAR)
 	{
 		qNode->after = queue->first;
+		qNode->before = queue->last;
 		queue->first->before = qNode;
+		queue->last-> = qNode;
 	}
 	else
 		qNode->after = NULL;
@@ -62,6 +114,40 @@ QNode_t * libqueue_add_node (Queue_t * queue, void * data)
 	queue->last = qNode;
 
 	qNode->queue = queue;
+	qNode->data = data;
+
+	return qNode;
+}
+
+QNode_t * libqueue_add_node_before (QNode_t * ref_node, void * data)
+{
+	QNode_t * qNode;
+	qNode = (QNode_t *) malloc (sizeof (QNode_t));
+
+	qNode->after = ref_node;
+	qNode->before = ref_node->after;
+
+	qNode->after->before = qNode;
+	qNode->before->after = qNode;
+
+	qNode->queue = ref_node->queue;
+	qNode->data = data;
+
+	return qNode;
+}
+
+QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
+{
+	QNode_t * qNode;
+	qNode = (QNode_t *) malloc (sizeof (QNode_t));
+
+	qNode->before = ref_node;
+	qNode->after = ref_node->before;
+
+	qNode->after->before = qNode;
+	qNode->before->after = qNode;
+
+	qNode->queue = ref_node->queue;
 	qNode->data = data;
 
 	return qNode;

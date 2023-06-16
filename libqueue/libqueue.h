@@ -17,6 +17,30 @@
 #ifndef _LIBQUEUE_H
 #define _LIBQUEUE_H
 
+#include "libtypes.h"
+
+/* Graphical representation of the nodes in the library.
+ *
+ *            last       ┌───────┐     first
+ *    ┌──────────────────┤ QUEUE ├─────────────────┐
+ *    │                  └───────┘                 │
+ *    ▼                                            ▼
+ * ┌──────┐before ┌──────┐before ┌──────┐before ┌──────┐
+ * │      ├──────►│      ├──────►│      ├──────►│      │
+ * │ NODE │ after │ NODE │ after │ NODE │ after │ NODE │
+ * │      │◄──────┤      │◄──────┤      │◄──────┤      │
+ * └──┬─┬─┘       └──────┘       └──────┘       └┬───┬─┘
+ *  ▲ │ │                                        │ ▲ │
+ *  │ │ │             If FIFO OR LIFO            │ │ │
+ *  │ │ │      after      ┌────┐      before     │ │ │
+ *  │ │ └────────────────►│NULL│◄────────────────┘ │ │
+ *  │ │                   └────┘                   │ │
+ *  │ │        after                               │ │
+ *  │ └────────────────────────────────────────────┘ │
+ *  │                  IF CIRCULAR    before         │
+ *  └────────────────────────────────────────────────┘
+ */
+
 /*********************************************************************************
  *                                    STRUCTS
  *********************************************************************************/
@@ -53,7 +77,7 @@ struct Queue_t
 Queue_t * libqueue_create_queue (QType type);
 Queue_t * libqueue_delete_queue (Queue_t * queue);
 
-int libqueue_count_nodes (Queue_t * queue);
+int32_t libqueue_count_nodes (Queue_t * queue);
 
 QNode_t * libqueue_add_node (Queue_t * queue, void * data);
 QNode_t * libqueue_add_node_first (Queue_t * queue, void * data);
