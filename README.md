@@ -88,8 +88,6 @@ Library can be included in C with:
 #include "libcontainer.h"
 ```
 
-
-
 ---
 
 ### 3.- Contributing
@@ -103,7 +101,7 @@ This Git repository contains my personal libraries and is licensed under the Cre
 
 ---
 
-### 5.-Author
+### 5.- Author
 
 - Name: Joseba R.G.
 - Email: joseba.rg@protonmail.com
