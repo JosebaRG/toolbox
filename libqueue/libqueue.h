@@ -1,75 +1,45 @@
-/**
- * @file libqueue.h
- *
- * @brief Library to work with queues.
- *
- * Queues are created as a structure with pointers to the next and previous nodes
- * and with void pointer to the undefined element contained by de the node.
- *
- * There is also a structure to contain the queue, that contains pointers to first
- * and last queue nodes, also contains an enum to define the queue type.
- * 
- * @author Joseba R.G.
- *         joseba.rg@protonmail.com
- */
+typedef enum
+{
+	CIRCULAR,
+	LIFO,
+	FIFO
+} QType;
 
-#ifndef _LIBQUEUE_H
-#define _LIBQUEUE_H
+typedef struct Queue_t Queue_t;
+typedef struct QNode_t QNode_t;
 
-#include <stdio.h>
-
-/*********************************************************************************
- *                                    STRUCTS
- *********************************************************************************/
-
-typedef struct QNode_t
+struct QNode_t
 {
 	QNode_t * before;
 	QNode_t * after;
-	void * data;
-} QNode_t;
+	Queue_t * queue;
+	void    * data;
+};
 
-typedef struct Queue_t
+struct Queue_t
 {
 	QNode_t * first;
 	QNode_t * last;
-	enum QType;
-} Queue_t;
-
-enum QType
-{
-	undefined,
-	Circular,
-	FiFo,
-	FiLo,
-	LiFo,
-	LiLo
+	QType     type;
 };
 
-/*********************************************************************************
- *                                      API
- *********************************************************************************/
+Queue_t * libqueue_create_queue (QType type);
+Queue_t * libqueue_delete_queue (Queue_t * queue);
 
-int libqueue_create_queue (Queue_t * queue, enum QType);
-int libqueue_create_node (QNode_t * node, void * data);
+QNode_t * libqueue_add_node (Queue_t * queue, void * data);
+QNode_t * libqueue_add_node_first (Queue_t * queue, void * data);
+QNode_t * libqueue_add_node_last (Queue_t * queue, void * data);
+QNode_t * libqueue_add_node_before (QNode_t * ref_node, void * data);
+QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data);
 
-int libqueue_add_node (Queue_t * queue, QNode_t * add_node);
-int libqueue_add_node_first (Queue_t * queue, QNode_t * add_node);
-int libqueue_add_node_last (Queue_t * queue, QNode_t * add_node);
-int libqueue_add_node_next (Queue_t * queue, QNode_t * add_node, QNode_t * ref_node);
-int libqueue_add_node_previous (Queue_t * queue, QNode_t * add_node, QNode_t * ref_node);
+QNode_t * libqueue_get_node (Queue_t * queue);
+QNode_t * libqueue_get_node_first (Queue_t * queue);
+QNode_t * libqueue_get_node_last (Queue_t * queue);
+QNode_t * libqueue_get_node_before (QNode_t * ref_node);
+QNode_t * libqueue_get_node_after (QNode_t * ref_node);
 
-int libqueue_get_node_data (QNode_t * node, void * data);
-int libqueue_set_node_data (QNode_t * node, void * data);
-
-int libqueue_delete_queue (Queue_t * queue);
-
-int libqueue_delete_node (Queue_t * queue, QNode_t * del_node);
-int libqueue_delete_node_first (Queue_t * queue, QNode_t * del_node);
-int libqueue_delete_node_last (Queue_t * queue, QNode_t * del_node);
-int libqueue_delete_node_next (Queue_t * queue, QNode_t * del_node, QNode_t * ref_node);
-int libqueue_delete_node_previous (Queue_t * queue, QNode_t * del_node, QNode_t * ref_node);
-
-long libqueue_count_node (Queue_t * queue);
-
-#endif //_LIBQUEUE_H
+void * libqueue_remove_node (Queue_t * queue);
+void * libqueue_remove_node_first (Queue_t * queue);
+void * libqueue_remove_node_last (Queue_t * queue);
+void * libqueue_remove_node_before (QNode_t * ref_node);
+void * libqueue_remove_node_before (QNode_t * ref_node);
