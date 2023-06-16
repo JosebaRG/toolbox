@@ -1,6 +1,27 @@
+/**
+ * @file libqueue.c
+ *
+ * @brief Library to work with queues.
+ *
+ * Nodes are created as a structure with pointers to the next and previous nodes,
+ * with a pointer to the queue and with void pointer to the undefined data element
+ * contained by de the node.
+ *
+ * There is also a structure to contain the queue, that contains pointers to first
+ * and last queue nodes, also contains an enum to define the queue type.
+ * 
+ * @author Joseba R.G.
+ *         joseba.rg@protonmail.com
+ */
+
+
 #include "libqueue.h"
 #include <stdlib.h>
 #include <stddef.h>
+
+/*********************************************************************************
+ *                                      API
+ *********************************************************************************/
 
 Queue_t * libqueue_create_queue (QType type)
 {
@@ -116,7 +137,7 @@ void * libqueue_remove_node (Queue_t * queue)
 		default:
 			rm_node = NULL;
 			break;
-    }
+	}
 
 	data = rm_node->data;
 
