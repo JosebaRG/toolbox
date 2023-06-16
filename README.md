@@ -38,7 +38,7 @@ Library can be included in C with:
 #include "libjxml.h"
 ```
 
-### 2.3.-LibQueue
+### 2.3.- LibQueue
 
 This library written in C provides tools to manage queues of different types like: circular, FiFo and LiFo.
 
@@ -48,7 +48,7 @@ Library can be included in C with:
 #include "libqueue.h"
 ```
 
-### 2.4.-LibLog
+### 2.4.- LibLog
 
 This library written in C gives an easy way to manage system logs.
 
@@ -58,7 +58,7 @@ Library can be included in C with:
 #include "liblog.h"
 ```
 
-### 2.5.-LibAssert
+### 2.5.- LibAssert
 
 This library written in C provides a collection of functions that use the assert() macro to check the integrity of their input parameters. By including this library in one project, it can easily incorporate parameter checking into the code without having to write your specific custom error-checking code.
 
@@ -68,7 +68,7 @@ Library can be included in C with:
 #include "libassert.h"
 ```
 
-### 2.6.-LibTypes
+### 2.6.- LibTypes
 
 This library written in C defines the data types in a more visual format.
 
@@ -78,7 +78,7 @@ Library can be included in C with:
 #include "libtypes.h"
 ```
 
-### 2.6.-LibContainer
+### 2.6.- LibContainer
 
 This library written in C allows accesing the container struct of the provided data.
 
