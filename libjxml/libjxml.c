@@ -51,9 +51,12 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 void libjxml_parse_tag (char * content_txt, long position, xml_tag_t * tag_t);
 xml_tag_t * libjxml_parse_content (char * xml_txt);
 xml_attribute_t * libjxml_parse_instruction (char * xml_txt);
-xml_t * libjxml_init_xml_mem (char * xml_txt);
+xml_t * libjxml_init_xml_mem ();
 
-void libjxml_test_atributes (xml_attribute_t * attribute_t);
+/* Only for testing */
+void libjxml_test_attribute (xml_attribute_t * attribute_t);
+void libjxml_test_tag (xml_tag_t * tag_t);
+
 
 /*********************************************************************************
  *                                   API
@@ -92,7 +95,7 @@ xml_t * libjxml_xml_to_mem (char * xml_txt)
 {
 	xml_t * xml_mem_t;
 
-	xml_mem_t = libjxml_init_xml_mem (xml_txt);
+	xml_mem_t = libjxml_init_xml_mem ();
 	xml_mem_t->instruction_t = libjxml_parse_instruction (xml_txt);
 	xml_mem_t->content_t = libjxml_parse_content (xml_txt);
 
@@ -432,7 +435,7 @@ long libjxml_find_next_tag (char * content_txt, long position)
 	content_length = libstring_length (content_txt);
 	
 	while ((content_txt [position] != '<') && (position < content_length))
-			position++;
+		position++;
 
 	if ((position >= 0) && (position < content_length))
 		return position;
@@ -838,20 +841,59 @@ xml_t * libjxml_init_xml_mem (char * xml_txt)
  *                                  TESTS
  *********************************************************************************/
 
-void libjxml_test_atributes (xml_attribute_t * attribute_t)
+void libjxml_test_attribute (xml_attribute_t * attribute_t)
 {
 	if (attribute_t != NULL)
 	{
-		printf ("\n+++++++++++++++");
-		printf ("\nCampo: %s", attribute_t->name);
-		printf ("\nValor: %s", attribute_t->value);
-		
-		libjxml_test_atributes (attribute_t->next_attribute_t);
+		printf ("\nAttribute: \"%s\" - \"%s\"", attribute_t->name, attribute_t->value);
+		libjxml_test_attribute (attribute_t->next_attribute_t);
 	}
-	else
+}
+
+void libjxml_test_tag (xml_tag_t * tag_t)
+{
+	if (tag_t != NULL)
 	{
-		printf("\nAtributo en blanco");
+		int selection = 0;
+
+		printf("\n+++++++++++++++++++++++++++++++++++++++++");
+		printf("\nName:  \"%s\"", tag_t->name);
+		printf("\nValue: \"%s\"", tag_t->value);
+		libjxml_test_attribute (tag_t->attribute_t);
+		printf("\nNested on:  %p", tag_t->nested_tag_t);
+		printf("\nSibling on: %p", tag_t->sibling_tag_t);
+		printf("\n-------------------------");
+		printf("\n1.- Close");
+		printf("\n2.- Go to nested");
+		printf("\n3.- Go to sibling");
+		printf("\nSelect: ");
+		scanf("%d", &selection);
+
+		if (selection == 2)
+			libjxml_test_tag (tag_t->nested_tag_t);
+
+		if (selection == 3)
+			libjxml_test_tag (tag_t->sibling_tag_t);
 	}
+}
+
+
+void libjxml_test (xml_t * xml_mem_t)
+{
+	int selection = 0;
+
+	printf("\n+++++++++++++++++++++++++++++++++++++++++");
+	libjxml_test_attribute (xml_mem_t->instruction_t);
+	printf("\nContent on: %p", xml_mem_t->content_t);
+	printf("\n-------------------------");
+	printf("\n1.- Close");
+	printf("\n2.- Go to tag");
+	printf("\nSelect: ");
+	scanf("%d", &selection);
+
+	if (selection == 2)
+		libjxml_test_tag (xml_mem_t->content_t)		;
+
 }
 
 int main()
@@ -864,11 +906,13 @@ int main()
 		xml_mem_t = libjxml_file_to_mem (".ignore/example.xml");
 	
 		libjxml_mem_to_file (xml_mem_t, ".ignore/xml_name.xml", true);
+
+		libjxml_test (xml_mem_t);
 	
 		quantity = libjxml_free_xml_mem (xml_mem_t);
 
 		printf ("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++ %ld\n\n", quantity);
-	} while (1);
+	} while (0);
 
 	printf("\n");
     return 0;

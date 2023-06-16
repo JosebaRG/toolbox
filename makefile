@@ -97,7 +97,7 @@ $(D-OBJ)/libassert.o: $(D-ASR)/libassert.c $(DEPS)
 .PHONY: help
 help:
 	@echo ""
-	@echo "Next commands works with curren makefile."
+	@echo "Next commands works with current makefile."
 	@echo ""
 	@echo "If it's needed to contact the maintainer, please send an email to Joseba R.G."
 	@echo ""
