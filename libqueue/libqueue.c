@@ -14,13 +14,12 @@
  *         joseba.rg@protonmail.com
  */
 
-
 #include "libqueue.h"
 #include <stdlib.h>
 #include <stddef.h>
 
 /*********************************************************************************
- *                                      API
+ *                                   API - QUEUE
  *********************************************************************************/
 
 Queue_t * libqueue_create_queue (QType type)
@@ -35,15 +34,78 @@ Queue_t * libqueue_create_queue (QType type)
 	return queue;
 }
 
-Queue_t * libqueue_delete_queue (Queue_t * queue)
+uint32_t libqueue_delete_queue (Queue_t * queue)
 {
+	QNode_t * rm_node;
+
+	uint32_t counter = 0;
+
 	while (queue->first != NULL)
 	{
-		libqueue_remove_node (queue);
+		rm_node = queue->first;
+		queue->first = queue->first->after;
+		libqueue_remove_node (rm_node);
+		counter++;
 	}
+
+	return counter;
 }
 
+uint32_t libqueue_count_nodes (Queue_t * queue)
+{
+	uint32_t counter = 0;
+
+	QNode_t * aux_node;
+	aux_node = queue->first;
+
+	if (aux_node != NULL)
+		return 0;
+
+	do
+	{
+		aux_node = aux_node->after;
+		counter++;
+	} while ((aux_node != NULL) || ((queue->type == CIRCULAR) && (aux_node != queue->first)));
+
+	return counter;
+}
+
+/*********************************************************************************
+ *                               API - ADD NODE
+ *********************************************************************************/
+
 QNode_t * libqueue_add_node (Queue_t * queue, void * data)
+{
+	return libqueue_add_node_last (queue, data);
+}
+
+QNode_t * libqueue_add_node_first (Queue_t * queue, void * data)
+{
+	QNode_t * qNode;
+	qNode = (QNode_t *) malloc (sizeof (QNode_t));
+
+	queue->first->before = qNode;
+	qNode->after = queue->first;
+	
+	if (queue->type == CIRCULAR)
+	{
+		qNode->after = queue->first;
+		qNode->before = queue->last;
+		queue->last->after = qNode;
+		queue->first-> = qNode;
+	}
+	else
+		qNode->before = NULL;
+
+	queue->first = qNode;
+
+	qNode->queue = queue;
+	qNode->data = data;
+
+	return qNode;
+}
+
+QNode_t * libqueue_add_node_last (Queue_t * queue, void * data)
 {
 	QNode_t * qNode;
 	qNode = (QNode_t *) malloc (sizeof (QNode_t));
@@ -54,7 +116,9 @@ QNode_t * libqueue_add_node (Queue_t * queue, void * data)
 	if (queue->type == CIRCULAR)
 	{
 		qNode->after = queue->first;
+		qNode->before = queue->last;
 		queue->first->before = qNode;
+		queue->last-> = qNode;
 	}
 	else
 		qNode->after = NULL;
@@ -66,6 +130,44 @@ QNode_t * libqueue_add_node (Queue_t * queue, void * data)
 
 	return qNode;
 }
+
+QNode_t * libqueue_add_node_before (QNode_t * ref_node, void * data)
+{
+	QNode_t * qNode;
+	qNode = (QNode_t *) malloc (sizeof (QNode_t));
+
+	qNode->after = ref_node;
+	qNode->before = ref_node->after;
+
+	qNode->after->before = qNode;
+	qNode->before->after = qNode;
+
+	qNode->queue = ref_node->queue;
+	qNode->data = data;
+
+	return qNode;
+}
+
+QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
+{
+	QNode_t * qNode;
+	qNode = (QNode_t *) malloc (sizeof (QNode_t));
+
+	qNode->before = ref_node;
+	qNode->after = ref_node->before;
+
+	qNode->after->before = qNode;
+	qNode->before->after = qNode;
+
+	qNode->queue = ref_node->queue;
+	qNode->data = data;
+
+	return qNode;
+}
+
+/*********************************************************************************
+ *                                 API -  GET NODE
+ *********************************************************************************/
 
 QNode_t * libqueue_get_node (Queue_t * queue)
 {
@@ -81,16 +183,84 @@ QNode_t * libqueue_get_node (Queue_t * queue)
 			return queue->first;
 			break;
 		default:
+			return NULL;
 			break;
     }
 }
+
+QNode_t * libqueue_get_node_first (Queue_t * queue)
+{
+	return queue->first;
+
+}
+
+QNode_t * libqueue_get_node_last (Queue_t * queue)
+{
+	return queue->last;
+}
+
+QNode_t * libqueue_get_node_before (QNode_t * ref_node);
+{
+	return ref_node->before;
+}
+
+QNode_t * libqueue_get_node_after (QNode_t * ref_node);
+{
+	return ref_node->after;
+}
+
+/*********************************************************************************
+ *                                 API -  GET DATA
+ *********************************************************************************/
+
+void * libqueue_get_data (Queue_t * queue)
+{
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			return queue->first->data;
+			break;
+		case LIFO:
+			return queue->last->data;
+			break;
+		case FIFO:
+			return queue->first->data;
+			break;
+		default:
+			return NULL;
+			break;
+}
+
+void * libqueue_get_data_first (Queue_t * queue)
+{
+	return queue->first->data;
+}
+
+void * libqueue_get_data_last (Queue_t * queue)
+{
+	return queue->first->data;
+}
+
+void * libqueue_get_data_before (QNode_t * ref_node);
+{
+	return ref_node->before->data;
+}
+
+void * libqueue_get_data_after (QNode_t * ref_node);
+{
+	return ref_node->after->data;
+}
+
+/*********************************************************************************
+ *                                API -  REMOVE NODE
+ *********************************************************************************/
 
 void * libqueue_remove_node (Queue_t * queue)
 {
 	QNode_t * rm_node;
 	void * data = NULL;
 
-	if (queue->first != NULL)
+	if (queue->first == NULL)
 		return data;
 
 	switch (queue->type)
@@ -145,3 +315,153 @@ void * libqueue_remove_node (Queue_t * queue)
 	
 	return data;
 }
+
+void * libqueue_remove_node_first (Queue_t * queue)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (queue->first == NULL)
+		return data;
+
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			rm_node = queue->first;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{			
+				queue->first->before->after = queue->first->after;
+				queue->first->after->before = queue->first->before;
+			}
+			break;
+		default:
+			rm_node = queue->first;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{
+				queue->first->after->before = NULL;
+				queue->first = queue->first->after;
+			}
+			break;
+	}
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+void * libqueue_remove_node_last (Queue_t * queue)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (queue->last == NULL)
+		return data;
+
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			rm_node = queue->last;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{			
+				queue->last->before->after = queue->last->after;
+				queue->last->after->before = queue->last->before;
+			}
+			break;
+		default:
+			rm_node = queue->last;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{
+				queue->last->before->after = NULL;
+				queue->last = queue->last->before;
+			}
+			break;
+	}
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+void * libqueue_remove_node_before (QNode_t * ref_node)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (ref_node == NULL)
+		return data;
+	
+	if (ref_node->before == NULL)
+		return data;
+
+	rm_node = ref_node->before;
+
+	rm_node->before->after = rm_node->after;
+	rm_node->after->before = rm_node->before;
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+void * libqueue_remove_node_after (QNode_t * ref_node)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (ref_node == NULL)
+		return data;
+	
+	if (ref_node->before == NULL)
+		return data;
+
+	rm_node = ref_node->before;
+
+	rm_node->before->after = rm_node->after;
+	rm_node->after->before = rm_node->before;
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+/*********************************************************************************
+ *                                 API - SWAP NODE
+ *********************************************************************************/
+
+void libqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b)
+{
+	void * data;
+
+	data = ref_node_a->data;
+	ref_node_a->data = ref_node_b->data;
+	ref_node_b->data = data;
+}
+
