@@ -19,31 +19,36 @@
 
 #include "libtypes.h"
 
-/* Graphical representation of the nodes in the library.
+/*********************************************************************************
+ *    Graphical representation of the nodes in the library.
+ *********************************************************************************
  *
- *            last       ┌───────┐     first
- *    ┌──────────────────┤ QUEUE ├─────────────────┐
- *    │                  └───────┘                 │
- *    ▼                                            ▼
- * ┌──────┐before ┌──────┐before ┌──────┐before ┌──────┐
- * │      ├──────►│      ├──────►│      ├──────►│      │
- * │ NODE │ after │ NODE │ after │ NODE │ after │ NODE │
- * │      │◄──────┤      │◄──────┤      │◄──────┤      │
- * └──┬─┬─┘       └──────┘       └──────┘       └┬───┬─┘
- *  ▲ │ │                                        │ ▲ │
- *  │ │ │             If FIFO OR LIFO            │ │ │
- *  │ │ │      after      ┌────┐      before     │ │ │
- *  │ │ └────────────────►│NULL│◄────────────────┘ │ │
- *  │ │                   └────┘                   │ │
- *  │ │        after                               │ │
- *  │ └────────────────────────────────────────────┘ │
- *  │                  IF CIRCULAR    before         │
- *  └────────────────────────────────────────────────┘
+ *
+ *              last       ┌───────┐     first
+ *      ┌──────────────────┤ QUEUE ├─────────────────┐
+ *      │                  └───────┘                 │
+ *      ▼                                            ▼
+ *   ┌──────┐before ┌──────┐before ┌──────┐before ┌──────┐
+ *   │      ├──────►│      ├──────►│      ├──────►│      │
+ *   │ NODE │ after │ NODE │ after │ NODE │ after │ NODE │
+ *   │      │◄──────┤      │◄──────┤      │◄──────┤      │
+ *   └──┬─┬─┘       └──────┘       └──────┘       └┬───┬─┘
+ *    ▲ │ │                                        │ ▲ │
+ *    │ │ │             If FIFO OR LIFO            │ │ │
+ *    │ │ │      after      ┌────┐      before     │ │ │
+ *    │ │ └────────────────►│NULL│◄────────────────┘ │ │
+ *    │ │                   └────┘                   │ │
+ *    │ │        after                               │ │
+ *    │ └────────────────────────────────────────────┘ │
+ *    │                  IF CIRCULAR    before         │
+ *    └────────────────────────────────────────────────┘
  */
 
 /*********************************************************************************
  *                                    STRUCTS
  *********************************************************************************/
+typedef struct Queue_t Queue_t;
+typedef struct QNode_t QNode_t;
 
 typedef enum
 {
@@ -52,22 +57,19 @@ typedef enum
 	FIFO
 } QType;
 
-typedef struct Queue_t Queue_t;
-typedef struct QNode_t QNode_t;
-
 struct QNode_t
 {
-	QNode_t * before;
-	QNode_t * after;
-	Queue_t * queue;
-	void    * data;
+	QNode_t * before; /**< pointer to the older element in the queue */
+	QNode_t * after;  /**< pointer to the newer element in the queue */
+	Queue_t * queue;  /**< ponter to the queue that contains this node */
+	void    * data;   /**< generic pointer to the data contained on the node */
 };
 
 struct Queue_t
 {
-	QNode_t * first;
-	QNode_t * last;
-	QType     type;
+	QNode_t * first; /**< pointer to the oldest element in the queue */
+	QNode_t * last;  /**< pointer to the newest element in the queue */
+	QType     type;  /**< queue type definition*/
 };
 
 /*********************************************************************************
