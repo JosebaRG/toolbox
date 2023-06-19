@@ -163,6 +163,11 @@ QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
 
 QNode_t * libqueue_get_node (Queue_t * queue)
 {
+	return libqueue_get_node_first (queue);
+}
+
+QNode_t * libqueue_get_node_first (Queue_t * queue)
+{
 	switch (queue->type)
 	{
 		case CIRCULAR:
@@ -175,8 +180,38 @@ QNode_t * libqueue_get_node (Queue_t * queue)
 			return queue->first;
 			break;
 		default:
+			return NULL;
 			break;
     }
+}
+
+QNode_t * libqueue_get_node_last (Queue_t * queue)
+{
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			return queue->last;
+			break;
+		case LIFO:
+			return queue->first;
+			break;
+		case FIFO:
+			return queue->last;
+			break;
+		default:
+			return NULL;
+			break;
+    }
+}
+
+QNode_t * libqueue_get_node_before (QNode_t * ref_node);
+{
+	return ref_node->before;
+}
+
+QNode_t * libqueue_get_node_after (QNode_t * ref_node);
+{
+	return ref_node->after;
 }
 
 void * libqueue_remove_node (Queue_t * queue)
