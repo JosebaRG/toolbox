@@ -75,9 +75,8 @@ struct Queue_t
  *********************************************************************************/
 
 Queue_t * libqueue_create_queue (QType type);
-Queue_t * libqueue_delete_queue (Queue_t * queue);
-
-int32_t libqueue_count_nodes (Queue_t * queue);
+uint32_t libqueue_delete_queue (Queue_t * queue);
+uint32_t libqueue_count_nodes (Queue_t * queue);
 
 QNode_t * libqueue_add_node (Queue_t * queue, void * data);
 QNode_t * libqueue_add_node_first (Queue_t * queue, void * data);

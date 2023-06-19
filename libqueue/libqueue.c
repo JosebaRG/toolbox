@@ -34,31 +34,39 @@ Queue_t * libqueue_create_queue (QType type)
 	return queue;
 }
 
-Queue_t * libqueue_delete_queue (Queue_t * queue)
+uint32_t libqueue_delete_queue (Queue_t * queue)
 {
 	QNode_t * rm_node;
+
+	uint32_t counter = 0;
 
 	while (queue->first != NULL)
 	{
 		rm_node = queue->first;
 		queue->first = queue->first->after;
 		libqueue_remove_node (rm_node);
+		counter++;
 	}
+
+	return counter;
 }
 
-int32_t libqueue_count_nodes (Queue_t * queue)
+uint32_t libqueue_count_nodes (Queue_t * queue)
 {
-	int32_t counter = 0;
+	uint32_t counter = 0;
 
 	QNode_t * aux_node;
 	aux_node = queue->first;
 
-	while (aux_node != NULL)
+	if (aux_node != NULL)
+		return 0;
+
+	do
 	{
-		counter++;
 		aux_node = aux_node->after;
-	}
-	
+		counter++;
+	} while ((aux_node != NULL) || ((queue->type == CIRCULAR) && (aux_node != queue->first)));
+
 	return counter;
 }
 
