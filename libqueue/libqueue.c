@@ -19,7 +19,7 @@
 #include <stddef.h>
 
 /*********************************************************************************
- *                                      API
+ *                                   API - QUEUE
  *********************************************************************************/
 
 Queue_t * libqueue_create_queue (QType type)
@@ -69,6 +69,10 @@ uint32_t libqueue_count_nodes (Queue_t * queue)
 
 	return counter;
 }
+
+/*********************************************************************************
+ *                               API - ADD NODE
+ *********************************************************************************/
 
 QNode_t * libqueue_add_node (Queue_t * queue, void * data)
 {
@@ -161,6 +165,10 @@ QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
 	return qNode;
 }
 
+/*********************************************************************************
+ *                                 API -  GET NODE
+ *********************************************************************************/
+
 QNode_t * libqueue_get_node (Queue_t * queue)
 {
 	switch (queue->type)
@@ -201,6 +209,10 @@ QNode_t * libqueue_get_node_after (QNode_t * ref_node);
 	return ref_node->after;
 }
 
+/*********************************************************************************
+ *                                 API -  GET DATA
+ *********************************************************************************/
+
 void * libqueue_get_data (Queue_t * queue)
 {
 	switch (queue->type)
@@ -238,6 +250,10 @@ void * libqueue_get_data_after (QNode_t * ref_node);
 {
 	return ref_node->after->data;
 }
+
+/*********************************************************************************
+ *                                API -  REMOVE NODE
+ *********************************************************************************/
 
 void * libqueue_remove_node (Queue_t * queue)
 {
@@ -434,5 +450,18 @@ void * libqueue_remove_node_after (QNode_t * ref_node)
 	free (rm_node);
 	
 	return data;
+}
+
+/*********************************************************************************
+ *                                 API - SWAP NODE
+ *********************************************************************************/
+
+void libqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b)
+{
+	void * data;
+
+	data = ref_node_a->data;
+	ref_node_a->data = ref_node_b->data;
+	ref_node_b->data = data;
 }
 

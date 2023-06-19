@@ -104,4 +104,6 @@ void * libqueue_remove_node_last (Queue_t * queue);
 void * libqueue_remove_node_before (QNode_t * ref_node);
 void * libqueue_remove_node_after (QNode_t * ref_node);
 
+void libqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b);
+
 #endif //_LIBQUEUE_H
