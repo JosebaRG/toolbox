@@ -272,7 +272,7 @@ void * libqueue_remove_node (Queue_t * queue)
 	QNode_t * rm_node;
 	void * data = NULL;
 
-	if (queue->first != NULL)
+	if (queue->first == NULL)
 		return data;
 
 	switch (queue->type)
@@ -327,3 +327,140 @@ void * libqueue_remove_node (Queue_t * queue)
 	
 	return data;
 }
+
+void * libqueue_remove_node_first (Queue_t * queue)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (queue->first == NULL)
+		return data;
+
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			rm_node = queue->first;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{			
+				queue->first->before->after = queue->first->after;
+				queue->first->after->before = queue->first->before;
+			}
+			break;
+		default:
+			rm_node = queue->first;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{
+				queue->first->after->before = NULL;
+				queue->first = queue->first->after;
+			}
+			break;
+	}
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+void * libqueue_remove_node_last (Queue_t * queue)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (queue->last == NULL)
+		return data;
+
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			rm_node = queue->last;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{			
+				queue->last->before->after = queue->last->after;
+				queue->last->after->before = queue->last->before;
+			}
+			break;
+		default:
+			rm_node = queue->last;
+			if (queue->first == queue->last)
+			{
+				queue->first = NULL;
+				queue->last  = NULL;
+			}
+			else
+			{
+				queue->last->before->after = NULL;
+				queue->last = queue->last->before;
+			}
+			break;
+	}
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+void * libqueue_remove_node_before (QNode_t * ref_node)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (ref_node == NULL)
+		return data;
+	
+	if (ref_node->before == NULL)
+		return data;
+
+	rm_node = ref_node->before;
+
+	rm_node->before->after = rm_node->after;
+	rm_node->after->before = rm_node->before;
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
+void * libqueue_remove_node_after (QNode_t * ref_node)
+{
+	QNode_t * rm_node;
+	void * data = NULL;
+
+	if (ref_node == NULL)
+		return data;
+	
+	if (ref_node->before == NULL)
+		return data;
+
+	rm_node = ref_node->before;
+
+	rm_node->before->after = rm_node->after;
+	rm_node->after->before = rm_node->before;
+
+	data = rm_node->data;
+
+	free (rm_node);
+	
+	return data;
+}
+
