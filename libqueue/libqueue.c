@@ -219,7 +219,7 @@ void * libqueue_get_data (Queue_t * queue)
 	return libqueue_get_data_first (queue);
 }
 
-void * libqueue_get_node_first (Queue_t * queue)
+void * libqueue_get_data_first (Queue_t * queue)
 {
 	switch (queue->type)
 	{
@@ -238,7 +238,7 @@ void * libqueue_get_node_first (Queue_t * queue)
     }
 }
 
-void * libqueue_get_node_last (Queue_t * queue)
+void * libqueue_get_data_last (Queue_t * queue)
 {
 	switch (queue->type)
 	{
@@ -257,12 +257,12 @@ void * libqueue_get_node_last (Queue_t * queue)
     }
 }
 
-void * libqueue_get_node_before (QNode_t * ref_node);
+void * libqueue_get_data_before (QNode_t * ref_node);
 {
 	return ref_node->before->data;
 }
 
-void * libqueue_get_node_after (QNode_t * ref_node);
+void * libqueue_get_data_after (QNode_t * ref_node);
 {
 	return ref_node->after->data;
 }
