@@ -163,45 +163,32 @@ QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
 
 QNode_t * libqueue_get_node (Queue_t * queue)
 {
-	return libqueue_get_node_first (queue);
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			return queue->first;
+			break;
+		case LIFO:
+			return queue->last;
+			break;
+		case FIFO:
+			return queue->first;
+			break;
+		default:
+			return NULL;
+			break;
+    }
 }
 
 QNode_t * libqueue_get_node_first (Queue_t * queue)
 {
-	switch (queue->type)
-	{
-		case CIRCULAR:
-			return queue->first;
-			break;
-		case LIFO:
-			return queue->last;
-			break;
-		case FIFO:
-			return queue->first;
-			break;
-		default:
-			return NULL;
-			break;
-    }
+	return queue->first;
+
 }
 
 QNode_t * libqueue_get_node_last (Queue_t * queue)
 {
-	switch (queue->type)
-	{
-		case CIRCULAR:
-			return queue->last;
-			break;
-		case LIFO:
-			return queue->first;
-			break;
-		case FIFO:
-			return queue->last;
-			break;
-		default:
-			return NULL;
-			break;
-    }
+	return queue->last;
 }
 
 QNode_t * libqueue_get_node_before (QNode_t * ref_node);
@@ -216,45 +203,30 @@ QNode_t * libqueue_get_node_after (QNode_t * ref_node);
 
 void * libqueue_get_data (Queue_t * queue)
 {
-	return libqueue_get_data_first (queue);
+	switch (queue->type)
+	{
+		case CIRCULAR:
+			return queue->first->data;
+			break;
+		case LIFO:
+			return queue->last->data;
+			break;
+		case FIFO:
+			return queue->first->data;
+			break;
+		default:
+			return NULL;
+			break;
 }
 
 void * libqueue_get_data_first (Queue_t * queue)
 {
-	switch (queue->type)
-	{
-		case CIRCULAR:
-			return queue->first->data;
-			break;
-		case LIFO:
-			return queue->last->data;
-			break;
-		case FIFO:
-			return queue->first->data;
-			break;
-		default:
-			return NULL;
-			break;
-    }
+	return queue->first->data;
 }
 
 void * libqueue_get_data_last (Queue_t * queue)
 {
-	switch (queue->type)
-	{
-		case CIRCULAR:
-			return queue->last->data;
-			break;
-		case LIFO:
-			return queue->first->data;
-			break;
-		case FIFO:
-			return queue->last->data;
-			break;
-		default:
-			return NULL;
-			break;
-    }
+	return queue->first->data;
 }
 
 void * libqueue_get_data_before (QNode_t * ref_node);
