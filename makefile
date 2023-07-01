@@ -15,43 +15,26 @@ DEBUG = 3
 
 # MAIN CONFIGURATION
 COMPILER = gcc
-CFLAGS = -I$(D-STR) -I$(D-XML) -I$(D-ASR)
+CFLAGS = -I$(D-INC)
 
 # EXTERNAL LIBRARIES IF NEEDED
 LIBS = # -lm
 LDIR = ./lib
 
 # COMPILATION PATHS
-# TARGET, OBJECT, SOURCE, FUNCTIONS, PLATFORM
 D-OBJ = ./.obj
-D-STR = ./libstring
-D-XML = ./libjxml
-D-ASR = ./libassert
+D-INC = ./inc
+D-SRC = ./src
+
 
 ####################
-# ELEMENTS
+# POPULATE FOLDERS
 ####################
 
-# LIST OF HEADER FILES
-DEPS = \
-	$(D-STR)/libstring.h \
-	\
-	$(D-XML)/libjxml.h \
-	\
-	$(D-ASR)/libassert.h
+DEPS = $(wildcard $(D-INC)/*.h)
+SRC = $(wildcard $(D-SRC)/*.c)
+OBJ = $(patsubst $(D-SRC)/%.c,$(D-OBJ)/%.o,$(SRC))
 
-
-
-# LIST OF SOURCE FILES
-SRC  = \
-	libstring.c \
-	\
-	libjxml.c \
-	\
-	libassert.c
-
-# LIST OF OBJECT FILES
-OBJ = $(patsubst %.c,$(D-OBJ)/%.o,$(SRC))
 
 ############################################################
 #                      MAKEFILE START                      #
@@ -59,7 +42,7 @@ OBJ = $(patsubst %.c,$(D-OBJ)/%.o,$(SRC))
 
 # DEFAULT RULE FOR MAKE
 $(TDIR)/$(TARGET): $(OBJ)
-	echo "Compilation"
+	@echo "Target compilation"
 	mkdir -p $(TDIR)
 	$(COMPILER) -g$(DEBUG) -o $@ $^ $(DEPS) $(CFLAGS) $(LIBS)
 
@@ -74,18 +57,8 @@ call:
 # COMPILATION RULES
 ####################
 
-# LIBSTRING
-$(D-OBJ)/libstring.o: $(D-STR)/libstring.c $(DEPS)
-	mkdir -p $(D-OBJ)
-	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
-
-# LIBXML
-$(D-OBJ)/libjxml.o: $(D-XML)/libjxml.c $(DEPS)
-	mkdir -p $(D-OBJ)
-	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
-
-# LIBASSERT
-$(D-OBJ)/libassert.o: $(D-ASR)/libassert.c $(DEPS)
+$(D-OBJ)/%.o: $(D-SRC)/%.c $(DEPS)
+	@echo "Compiling: $< into $@"
 	mkdir -p $(D-OBJ)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)
 
@@ -102,11 +75,12 @@ help:
 	@echo "If it's needed to contact the maintainer, please send an email to Joseba R.G."
 	@echo ""
 	@echo "Commands for compilation:"
-	@echo "    make               : compiles everything and leaves the bynary files in ./deploy."
+	@echo "    make			: compiles everything and leaves the bynary files in ./deploy."
 	@echo ""
 	@echo "Commands for cleaning:"
-	@echo "    make clean         : deletes compilation results and temporary files."
+	@echo "    make clean	: deletes compilation results and temporary files."
 	@echo ""
+
 
 ####################
 # RULES FOR CLEANING
@@ -115,7 +89,7 @@ help:
 # CLEAN COMMAND
 .PHONY: clean
 clean:
-	echo "DELETING FILES"
+	@echo "DELETING FILES"
 	rm -f -r $(D-OBJ)
 	rm -f $(TDIR)/$(TARGET)
 	rm -d $(TDIR) # DELETE ONLY IF EMPTY FOLDER

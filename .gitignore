@@ -1,5 +1,7 @@
 # Ignore another repositories
 common
+
+# Ignore deployment
 deploy
 
 # Ignore temporary files
@@ -9,7 +11,8 @@ deploy
 # Ignore old files
 *.old
 
-# Ignore this hidden directorys
+# Ignore hidden directorys
+.obj
 .ignore
 .trash
 
