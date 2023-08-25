@@ -896,6 +896,7 @@ void libjxml_test (xml_t * xml_mem_t)
 
 }
 
+/*
 int main()
 {
 	xml_t * xml_mem_t;
@@ -917,3 +918,4 @@ int main()
 	printf("\n");
     return 0;
 }
+*/
