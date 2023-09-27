@@ -84,8 +84,8 @@ call:
 ####################
 
 .PHONY: all
-all:
-$(D-OBJ)/%.o: $(D-SRC)/%.c $(DEPS)
+all: all_tb
+	$(D-OBJ)/%.o: $(D-SRC)/%.c $(DEPS)
 	@echo "Compiling: $< into $@"
 	mkdir -p $(D-OBJ)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)

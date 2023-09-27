@@ -32,7 +32,10 @@ TB-OBJ = $(patsubst $(D-TB-SRC)/%.c,$(D-TB-OBJ)/%.o,$(TB-SRC))
 # COMPILATION RULES
 ####################
 
-$(D-TB-OBJ)/%.o: $(D-TB-SRC)/%.c $(TB-DEPS)
+.PHONY: all_tb
+all_tb: $(TB-OBJ)
+
+$(TB-OBJ): $(D-TB-OBJ)/%.o: $(D-TB-SRC)/%.c $(TB-DEPS)
 	@echo "Compiling: $< into $@"
 	mkdir -p $(D-TB-OBJ)
 	$(COMPILER) -g$(DEBUG) -c -o $@ $< $(CFLAGS)

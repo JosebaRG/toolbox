@@ -22,7 +22,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "libtypes.h"
+#include "libjtypes.h"
 
 /*********************************************************************************
  *                                 DEFINITIONS
