@@ -8,11 +8,23 @@ This project is a Git repository that contains several generic libraries to simp
 
 ## 1.- Getting Started
 
+### 1.1- Download libraries
+
 This libraries can be downloaded with the next command:
 
 ```bash
 $ git clone git@github.com:JosebaRG/toolbox.git
 ```
+
+### 1.2.- Example project
+
+Located at /toolbox/example is an empty project that uses this toolbox libraries.
+
+This project allows for the automatic download from git repository of the toolbox library and includes toolbox makefile in the main projects makefile.
+
+A partially empty main.c file is also provided.
+
+> If the toolbox code is downloaded through the automatic mechanism of the example, the "toolbox" folder will appear with a clone of the repository, so this folder should be included in the .gitignore exclusion list.
 
 ---
 

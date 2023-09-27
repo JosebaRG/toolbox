@@ -18,3 +18,4 @@ deploy
 
 # Ignore example files
 *.example
+example/toolbox
