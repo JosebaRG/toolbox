@@ -1,5 +1,5 @@
 /**
- * @file libassert.c
+ * @file libjassert.c
  *
  * @brief Collection of functions to check the integrity of parameters.
  *
@@ -16,15 +16,15 @@
 #include <stddef.h>
 #include <assert.h>
 
-#include "libassert.h"
+#include "libjassert.h"
 
-void libassert_assert ()
+void libjassert_assert ()
 {
-#ifdef LIBASSERT_ASSERT
+#ifdef LIBJASSERT_ASSERT
 	assert (0);
-#endif //LIBASSERT_ASSERT
+#endif //LIBJASSERT_ASSERT
 
-#ifdef LIBASSERT_LOOP
+#ifdef LIBJASSERT_LOOP
 	do {} while (1);
-#endif //LIBASSERT_LOOP
+#endif //LIBJASSERT_LOOP
 }

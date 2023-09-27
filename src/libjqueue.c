@@ -1,5 +1,5 @@
 /**
- * @file libqueue.c
+ * @file libjqueue.c
  *
  * @brief Library to work with queues.
  *
@@ -14,7 +14,7 @@
  *         joseba.rg@protonmail.com
  */
 
-#include "libqueue.h"
+#include "libjqueue.h"
 #include <stdlib.h>
 #include <stddef.h>
 
@@ -22,7 +22,7 @@
  *                                   API - QUEUE
  *********************************************************************************/
 
-Queue_t * libqueue_create_queue (QType type)
+Queue_t * libjqueue_create_queue (QType type)
 {
 	Queue_t * queue;
 	queue = (Queue_t *) malloc (sizeof (Queue_t));
@@ -34,7 +34,7 @@ Queue_t * libqueue_create_queue (QType type)
 	return queue;
 }
 
-uint32_t libqueue_delete_queue (Queue_t * queue)
+uint32_t libjqueue_delete_queue (Queue_t * queue)
 {
 	QNode_t * rm_node;
 
@@ -44,14 +44,14 @@ uint32_t libqueue_delete_queue (Queue_t * queue)
 	{
 		rm_node = queue->first;
 		queue->first = queue->first->after;
-		libqueue_remove_node (rm_node);
+		libjqueue_remove_node (rm_node);
 		counter++;
 	}
 
 	return counter;
 }
 
-uint32_t libqueue_count_nodes (Queue_t * queue)
+uint32_t libjqueue_count_nodes (Queue_t * queue)
 {
 	uint32_t counter = 0;
 
@@ -74,12 +74,12 @@ uint32_t libqueue_count_nodes (Queue_t * queue)
  *                               API - ADD NODE
  *********************************************************************************/
 
-QNode_t * libqueue_add_node (Queue_t * queue, void * data)
+QNode_t * libjqueue_add_node (Queue_t * queue, void * data)
 {
-	return libqueue_add_node_last (queue, data);
+	return libjqueue_add_node_last (queue, data);
 }
 
-QNode_t * libqueue_add_node_first (Queue_t * queue, void * data)
+QNode_t * libjqueue_add_node_first (Queue_t * queue, void * data)
 {
 	QNode_t * qNode;
 	qNode = (QNode_t *) malloc (sizeof (QNode_t));
@@ -104,7 +104,7 @@ QNode_t * libqueue_add_node_first (Queue_t * queue, void * data)
 	return qNode;
 }
 
-QNode_t * libqueue_add_node_last (Queue_t * queue, void * data)
+QNode_t * libjqueue_add_node_last (Queue_t * queue, void * data)
 {
 	QNode_t * qNode;
 	qNode = (QNode_t *) malloc (sizeof (QNode_t));
@@ -129,7 +129,7 @@ QNode_t * libqueue_add_node_last (Queue_t * queue, void * data)
 	return qNode;
 }
 
-QNode_t * libqueue_add_node_before (QNode_t * ref_node, void * data)
+QNode_t * libjqueue_add_node_before (QNode_t * ref_node, void * data)
 {
 	QNode_t * qNode;
 	qNode = (QNode_t *) malloc (sizeof (QNode_t));
@@ -146,7 +146,7 @@ QNode_t * libqueue_add_node_before (QNode_t * ref_node, void * data)
 	return qNode;
 }
 
-QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
+QNode_t * libjqueue_add_node_after (QNode_t * ref_node, void * data)
 {
 	QNode_t * qNode;
 	qNode = (QNode_t *) malloc (sizeof (QNode_t));
@@ -167,7 +167,7 @@ QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data)
  *                                 API -  GET NODE
  *********************************************************************************/
 
-QNode_t * libqueue_get_node (Queue_t * queue)
+QNode_t * libjqueue_get_node (Queue_t * queue)
 {
 	switch (queue->type)
 	{
@@ -186,23 +186,23 @@ QNode_t * libqueue_get_node (Queue_t * queue)
     }
 }
 
-QNode_t * libqueue_get_node_first (Queue_t * queue)
+QNode_t * libjqueue_get_node_first (Queue_t * queue)
 {
 	return queue->first;
 
 }
 
-QNode_t * libqueue_get_node_last (Queue_t * queue)
+QNode_t * libjqueue_get_node_last (Queue_t * queue)
 {
 	return queue->last;
 }
 
-QNode_t * libqueue_get_node_before (QNode_t * ref_node)
+QNode_t * libjqueue_get_node_before (QNode_t * ref_node)
 {
 	return ref_node->before;
 }
 
-QNode_t * libqueue_get_node_after (QNode_t * ref_node)
+QNode_t * libjqueue_get_node_after (QNode_t * ref_node)
 {
 	return ref_node->after;
 }
@@ -211,7 +211,7 @@ QNode_t * libqueue_get_node_after (QNode_t * ref_node)
  *                                 API -  GET DATA
  *********************************************************************************/
 
-void * libqueue_get_data (Queue_t * queue)
+void * libjqueue_get_data (Queue_t * queue)
 {
 	switch (queue->type)
 	{
@@ -230,22 +230,22 @@ void * libqueue_get_data (Queue_t * queue)
 	}
 }
 
-void * libqueue_get_data_first (Queue_t * queue)
+void * libjqueue_get_data_first (Queue_t * queue)
 {
 	return queue->first->data;
 }
 
-void * libqueue_get_data_last (Queue_t * queue)
+void * libjqueue_get_data_last (Queue_t * queue)
 {
 	return queue->first->data;
 }
 
-void * libqueue_get_data_before (QNode_t * ref_node)
+void * libjqueue_get_data_before (QNode_t * ref_node)
 {
 	return ref_node->before->data;
 }
 
-void * libqueue_get_data_after (QNode_t * ref_node)
+void * libjqueue_get_data_after (QNode_t * ref_node)
 {
 	return ref_node->after->data;
 }
@@ -254,7 +254,7 @@ void * libqueue_get_data_after (QNode_t * ref_node)
  *                                API -  REMOVE NODE
  *********************************************************************************/
 
-void * libqueue_remove_node (Queue_t * queue)
+void * libjqueue_remove_node (Queue_t * queue)
 {
 	QNode_t * rm_node;
 	void * data = NULL;
@@ -315,7 +315,7 @@ void * libqueue_remove_node (Queue_t * queue)
 	return data;
 }
 
-void * libqueue_remove_node_first (Queue_t * queue)
+void * libjqueue_remove_node_first (Queue_t * queue)
 {
 	QNode_t * rm_node;
 	void * data = NULL;
@@ -360,7 +360,7 @@ void * libqueue_remove_node_first (Queue_t * queue)
 	return data;
 }
 
-void * libqueue_remove_node_last (Queue_t * queue)
+void * libjqueue_remove_node_last (Queue_t * queue)
 {
 	QNode_t * rm_node;
 	void * data = NULL;
@@ -405,7 +405,7 @@ void * libqueue_remove_node_last (Queue_t * queue)
 	return data;
 }
 
-void * libqueue_remove_node_before (QNode_t * ref_node)
+void * libjqueue_remove_node_before (QNode_t * ref_node)
 {
 	QNode_t * rm_node;
 	void * data = NULL;
@@ -428,7 +428,7 @@ void * libqueue_remove_node_before (QNode_t * ref_node)
 	return data;
 }
 
-void * libqueue_remove_node_after (QNode_t * ref_node)
+void * libjqueue_remove_node_after (QNode_t * ref_node)
 {
 	QNode_t * rm_node;
 	void * data = NULL;
@@ -455,7 +455,7 @@ void * libqueue_remove_node_after (QNode_t * ref_node)
  *                                 API - SWAP NODE
  *********************************************************************************/
 
-void libqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b)
+void libjqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b)
 {
 	void * data;
 

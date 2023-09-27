@@ -16,8 +16,8 @@
 #include <ctype.h>
 
 #include "libjxml.h"
-#include "libstring.h"
-#include "libassert.h"
+#include "libjstring.h"
+#include "libjassert.h"
 
 /*********************************************************************************
  *                                 DECLARATIONS
@@ -287,7 +287,7 @@ char * libjxml_read (FILE * xml_file, long xml_length)
 
 	char * xml;
 	xml = (char *) malloc (xml_length * sizeof (char));
-	LIBASSERT_PTR (xml);
+	LIBJASSERT_PTR (xml);
 	read_len = fread (xml, sizeof (char), xml_length, xml_file);
 	
 	if (read_len == xml_length)
@@ -325,12 +325,12 @@ long libjxml_search_space (char * text, long position)
 
 	long result = LONG_MAX; // Maximum possible value for long
 
- 	space          = libstring_search (text, position, " ");
- 	newline        = libstring_search (text, position, "\n");
- 	tab_horizontal = libstring_search (text, position, "\t");
- 	tab_vertical   = libstring_search (text, position, "\v");
- 	form_feed      = libstring_search (text, position, "\f");
- 	carriage       = libstring_search (text, position, "\r");
+ 	space          = libjstring_search (text, position, " ");
+ 	newline        = libjstring_search (text, position, "\n");
+ 	tab_horizontal = libjstring_search (text, position, "\t");
+ 	tab_vertical   = libjstring_search (text, position, "\v");
+ 	form_feed      = libjstring_search (text, position, "\f");
+ 	carriage       = libjstring_search (text, position, "\r");
 
 	if ((space >= 0) && (space < result))
 		result = space;
@@ -359,7 +359,7 @@ long libjxml_search_space (char * text, long position)
 char * libjxml_check_empty (char * element)
 {
 	long length;
-	length = libstring_length (element);
+	length = libjstring_length (element);
 
 	while (length > 0)
 	{
@@ -391,19 +391,19 @@ char * libjxml_read_instruction (char * xml_txt)
 	long inst_end;
 	long inst_length;
 	
-	inst_start = libstring_search (xml_txt, 0, "<?");
-	inst_end   = libstring_search (xml_txt, 0, "?>");
+	inst_start = libjstring_search (xml_txt, 0, "<?");
+	inst_end   = libjstring_search (xml_txt, 0, "?>");
 
 	int bracket_len;
-	bracket_len = libstring_length ("<?");
+	bracket_len = libjstring_length ("<?");
 	inst_length = inst_end - inst_start + bracket_len;
 
 	if (inst_end <= inst_start)
 		return NULL;
 	
 	instruction = (char *) malloc (inst_length * sizeof (char));
-	LIBASSERT_PTR (instruction);
-	libstring_subset (xml_txt, inst_start, inst_length, instruction);
+	LIBJASSERT_PTR (instruction);
+	libjstring_subset (xml_txt, inst_start, inst_length, instruction);
 	
 	return instruction;
 }
@@ -414,11 +414,11 @@ char * libjxml_read_content (char * xml_txt)
 	long inst_end;
 	long main_start;
 
-	inst_end = libstring_search (xml_txt, 0, "?>");
-	inst_end = inst_end + libstring_length ("?>");
+	inst_end = libjstring_search (xml_txt, 0, "?>");
+	inst_end = inst_end + libjstring_length ("?>");
 
-	main_start = libstring_search (xml_txt, inst_end, "<");
-	next_inst  = libstring_search (xml_txt, inst_end, "<?");
+	main_start = libjstring_search (xml_txt, inst_end, "<");
+	next_inst  = libjstring_search (xml_txt, inst_end, "<?");
 
 	if (next_inst > 0)
 	{
@@ -432,7 +432,7 @@ char * libjxml_read_content (char * xml_txt)
 long libjxml_find_next_tag (char * content_txt, long position)
 {
 	long content_length;
-	content_length = libstring_length (content_txt);
+	content_length = libjstring_length (content_txt);
 	
 	while ((content_txt [position] != '<') && (position < content_length))
 		position++;
@@ -446,21 +446,21 @@ long libjxml_find_next_tag (char * content_txt, long position)
 char * libjxml_create_close_tag (char * name)
 {
 	long name_length;
-	name_length = libstring_length (name);
+	name_length = libjstring_length (name);
 	int bracket_len;
-	bracket_len = libstring_length ("</>");
+	bracket_len = libjstring_length ("</>");
 	
 	long length;
 	length = name_length + bracket_len;
 	char * close;
 	close = (char *) malloc (length * sizeof (char));
-	LIBASSERT_PTR (close);
+	LIBJASSERT_PTR (close);
 
 	close[0] = '<';
 	close[1] = '/';
 	close[2] = '\0';
-	libstring_concat (close, name);
-	libstring_concat (close, ">");
+	libjstring_concat (close, name);
+	libjstring_concat (close, ">");
 
 	return close;
 }
@@ -474,11 +474,11 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 	long slash;
 	long small = LONG_MAX;  // Maximum possible value for long
 
-	position = position + libstring_length ("<");
+	position = position + libjstring_length ("<");
 
 	blank   = libjxml_search_space (content_txt, position);
-	bracket = libstring_search (content_txt, position, ">");
-	slash   = libstring_search (content_txt, position, "/>");
+	bracket = libjstring_search (content_txt, position, ">");
+	slash   = libjstring_search (content_txt, position, "/>");
 
 	if ((blank > 0) && (blank < small))
         small = blank;
@@ -494,11 +494,11 @@ char * libjxml_parse_tag_name (char * content_txt, long position)
 		long length;
 		length = small - position;
 		name = (char *) malloc (length * sizeof (char));
-		LIBASSERT_PTR (name);
-		libstring_subset (content_txt, position, length, name);
+		LIBJASSERT_PTR (name);
+		libjstring_subset (content_txt, position, length, name);
 	}
 	else
-		printf ("\nLIBXML: Error parsing tag name");
+		printf ("\nLIBJXML: Error parsing tag name");
 
 	return name;
 }
@@ -510,8 +510,8 @@ char * libjxml_parse_tag_value (char * content_txt, long position, char * name)
 	long bracket;
 	long slash;
 
-	bracket = libstring_search (content_txt, position, ">");
-	slash   = libstring_search (content_txt, position, "/>");
+	bracket = libjstring_search (content_txt, position, ">");
+	slash   = libjstring_search (content_txt, position, "/>");
 
 	if ((bracket < slash) || (slash < 0))
 	{
@@ -523,9 +523,9 @@ char * libjxml_parse_tag_value (char * content_txt, long position, char * name)
 		long start_pos;
 		long length;
 
-		start_pos = bracket + libstring_length (">");
+		start_pos = bracket + libjstring_length (">");
 
-		close_pos = libstring_search (content_txt, start_pos, close);
+		close_pos = libjstring_search (content_txt, start_pos, close);
 		next_tag = libjxml_find_next_tag (content_txt, start_pos);
 		
 		length = next_tag - start_pos;
@@ -535,8 +535,8 @@ char * libjxml_parse_tag_value (char * content_txt, long position, char * name)
 			if (length > 0)
 			{
 				value = (char *) malloc (length * sizeof (char));
-				LIBASSERT_PTR (value);
-				libstring_subset (content_txt, start_pos, length, value);
+				LIBJASSERT_PTR (value);
+				libjstring_subset (content_txt, start_pos, length, value);
 				value = libjxml_check_empty (value);
 			}
 			else
@@ -556,8 +556,8 @@ xml_tag_t * libjxml_parse_tag_nested (char * content_txt, long position, char * 
 	long bracket;
 	long slash;
 
-	bracket = libstring_search (content_txt, position, ">");
-	slash   = libstring_search (content_txt, position, "/>");
+	bracket = libjstring_search (content_txt, position, ">");
+	slash   = libjstring_search (content_txt, position, "/>");
 
 	if ((bracket < slash) || (slash < 0))
 	{
@@ -568,9 +568,9 @@ xml_tag_t * libjxml_parse_tag_nested (char * content_txt, long position, char * 
 		long next_tag;
 		long start_pos;
 
-		start_pos = position + libstring_length (name);
+		start_pos = position + libjstring_length (name);
 
-		close_pos = libstring_search (content_txt, start_pos, close);
+		close_pos = libjstring_search (content_txt, start_pos, close);
 		next_tag = libjxml_find_next_tag (content_txt, start_pos);
 
 		if (close_pos > next_tag)
@@ -579,7 +579,7 @@ xml_tag_t * libjxml_parse_tag_nested (char * content_txt, long position, char * 
 			length = position + next_tag;
 			printf ("\n%s has nested on %ld", name, length);
 			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-			LIBASSERT_PTR (tag_t);
+			LIBJASSERT_PTR (tag_t);
 
 			libjxml_parse_tag (content_txt, next_tag, tag_t);
 		}
@@ -597,8 +597,8 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 	long slash;
 	long tag_end = 0;
 
-	bracket = libstring_search (content_txt, position, ">");
-	slash   = libstring_search (content_txt, position, "/>");
+	bracket = libjstring_search (content_txt, position, ">");
+	slash   = libjstring_search (content_txt, position, "/>");
 
 	long name_length;
 	name_length = libstring_length (name);
@@ -613,8 +613,8 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 		close = libjxml_create_close_tag (name);
 
 		long close_pos;
-		close_pos = libstring_search (content_txt, position, close);
-		tag_end = close_pos + libstring_length (close);
+		close_pos = libjstring_search (content_txt, position, close);
+		tag_end = close_pos + libjstring_length (close);
 
 		free (close);
 	}
@@ -624,7 +624,7 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 		long next_tag;
 		long next_close;
 		next_tag = libjxml_find_next_tag (content_txt, tag_end);
-		next_close = libstring_search (content_txt, tag_end, "</");
+		next_close = libjstring_search (content_txt, tag_end, "</");
 
 		if (next_tag < 0)
 			return tag_t;
@@ -632,7 +632,7 @@ xml_tag_t * libjxml_parse_tag_sibling (char * content_txt, long position, char *
 		if (next_tag < next_close)
 		{
 			tag_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-			LIBASSERT_PTR (tag_t);
+			LIBJASSERT_PTR (tag_t);
 			printf ("\n%s has sibling on %ld", name, next_tag);
 			libjxml_parse_tag (content_txt, next_tag, tag_t);
 			printf("\n\nSibling:%s", content_txt + next_tag);
@@ -651,14 +651,14 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 	long offset_aux;
 	long length;
 
-	position = position + libstring_length ("<") + libstring_length (name);
+	position = position + libjstring_length ("<") + libjstring_length (name);
 
 	while (1)
 	{
 		position = libjxml_advance_spaces (content_txt, position);
 
-		offset = libstring_search (content_txt, position, "=");
-		offset_aux = libstring_search (content_txt, position, ">");
+		offset = libjstring_search (content_txt, position, "=");
+		offset_aux = libjstring_search (content_txt, position, ">");
 		
 		if ((offset_aux <= offset) || (offset < 0))
 		{
@@ -668,7 +668,7 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 		{
 			xml_attribute_t * attribute_aux_t;
 			attribute_aux_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
-			LIBASSERT_PTR (attribute_aux_t);
+			LIBJASSERT_PTR (attribute_aux_t);
 			
 			if (attribute_t == NULL)
 				attribute_t = attribute_aux_t;
@@ -684,20 +684,20 @@ xml_attribute_t * libjxml_parse_tag_attribute (char * content_txt, long position
 			length = offset - position;
 			char * name;
 			name = (char *) malloc (length * sizeof (char));
-			LIBASSERT_PTR (name);
-			length = libstring_subset (content_txt, position, length, name);
+			LIBJASSERT_PTR (name);
+			length = libjstring_subset (content_txt, position, length, name);
 
-			position = offset + libstring_length ("=");
-			offset = libstring_search (content_txt, position, "\"");
-			position = offset + libstring_length ("\"");
-			offset = libstring_search (content_txt, position, "\"");
+			position = offset + libjstring_length ("=");
+			offset = libjstring_search (content_txt, position, "\"");
+			position = offset + libjstring_length ("\"");
+			offset = libjstring_search (content_txt, position, "\"");
 
 			length = offset - position;
 			char * value;
 			value = (char *) malloc (offset * sizeof (char));
-			LIBASSERT_PTR (value);
-			length = libstring_subset (content_txt, position, length, value);
-			position = offset + libstring_length ("\"");
+			LIBJASSERT_PTR (value);
+			length = libjstring_subset (content_txt, position, length, value);
+			position = offset + libjstring_length ("\"");
 
 			attribute_last_t->name = name;
 			attribute_last_t->value = value;
@@ -726,7 +726,7 @@ xml_tag_t * libjxml_parse_content (char * xml_txt)
 	content_txt = libjxml_read_content (xml_txt);
 	position = libjxml_find_next_tag (content_txt, position);
 	content_t = (xml_tag_t *) malloc (sizeof (xml_tag_t));
-	LIBASSERT_PTR (content_t);
+	LIBJASSERT_PTR (content_t);
 
 	libjxml_parse_tag (content_txt, position, content_t);
 	
@@ -746,32 +746,32 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 	char * instruction;
 	instruction = libjxml_read_instruction (xml_txt);
 	
-	offset = libstring_search (instruction, position, "<?");
-	position = position + libstring_length ("<?");
+	offset = libjstring_search (instruction, position, "<?");
+	position = position + libjstring_length ("<?");
 
 	offset = libjxml_search_space (instruction, position);
-	offset_aux = libstring_search (instruction, position, "?>");
+	offset_aux = libjstring_search (instruction, position, "?>");
 	if (offset_aux <= offset)
 	{
 		printf ("\nLibXML: Error parsing instruction. No instructions");
 		return NULL;
 	}
 
-	offset = libstring_search (instruction, position, "xml");
-	if (offset != libstring_length ("<?"))
+	offset = libjstring_search (instruction, position, "xml");
+	if (offset != libjstring_length ("<?"))
 	{
 		printf ("\nLibXML: Error parsing instruction. No xml begining");
 		return NULL;
 	}
 
-	position = libstring_length ("<?xml");
+	position = libjstring_length ("<?xml");
 
 	while (1)
 	{
 		position = libjxml_advance_spaces (instruction, position);
 
-		offset = libstring_search (instruction, position, "=");
-		offset_aux = libstring_search (instruction, position, "?>");
+		offset = libjstring_search (instruction, position, "=");
+		offset_aux = libjstring_search (instruction, position, "?>");
 		
 		if ((offset_aux <= offset) || (offset < 0))
 		{
@@ -782,7 +782,7 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 		{
 			xml_attribute_t * attribute_aux_t;
 			attribute_aux_t = (xml_attribute_t  *) malloc (sizeof (xml_attribute_t));
-			LIBASSERT_PTR (attribute_aux_t);
+			LIBJASSERT_PTR (attribute_aux_t);
 			
 			if (attribute_t == NULL)
 				attribute_t = attribute_aux_t;
@@ -798,22 +798,22 @@ xml_attribute_t * libjxml_parse_instruction (char * xml_txt)
 			length = offset - position;
 			char * name;
 			name = (char *) malloc (length * sizeof (char));
-			LIBASSERT_PTR (name);
+			LIBJASSERT_PTR (name);
 
-			length = libstring_subset (instruction, position, length, name);
+			length = libjstring_subset (instruction, position, length, name);
 
-			position = offset + libstring_length ("=");
-			offset = libstring_search (instruction, position, "\"");
-			position = offset + libstring_length ("\"");
-			offset = libstring_search (instruction, position, "\"");
+			position = offset + libjstring_length ("=");
+			offset = libjstring_search (instruction, position, "\"");
+			position = offset + libjstring_length ("\"");
+			offset = libjstring_search (instruction, position, "\"");
 
 			length = offset - position;
 			char * value;
 			value = (char *) malloc (offset * sizeof (char));
-			LIBASSERT_PTR (value);
+			LIBJASSERT_PTR (value);
 
-			length = libstring_subset (instruction, position, length, value);
-			position = offset + libstring_length ("\"");
+			length = libjstring_subset (instruction, position, length, value);
+			position = offset + libjstring_length ("\"");
 
 			attribute_last_t->name = name;
 			attribute_last_t->value = value;
@@ -829,7 +829,7 @@ xml_t * libjxml_init_xml_mem (char * xml_txt)
 {
 	xml_t * xml_mem_t;
 	xml_mem_t = (xml_t *) malloc (sizeof (xml_t));
-	LIBASSERT_PTR (xml_mem_t);
+	LIBJASSERT_PTR (xml_mem_t);
 
 	xml_mem_t->instruction_t = NULL;
 	xml_mem_t->content_t = NULL;
