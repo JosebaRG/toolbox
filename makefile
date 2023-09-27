@@ -43,7 +43,7 @@ $(D-TB-OBJ)/%.o: $(D-TB-SRC)/%.c $(TB-DEPS)
 ####################
 
 .PHONY: help_tb
-help:
+help_tb:
 	@echo ""
 	@echo "Next commands works with current makefile."
 	@echo ""
@@ -60,6 +60,6 @@ help:
 
 # CLEAN TOOLBOX
 .PHONY: clean_tb
-clean_cm:
+clean_tb:
 	@echo "DELETING TOOLBOX FILES"
 	rm -f -r $(D-TB-OBJ)
