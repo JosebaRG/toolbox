@@ -78,7 +78,7 @@ Library can be included in C with:
 #include "libjtypes.h"
 ```
 
-### 2.6.- LibJContainer
+### 2.7.- LibJContainer
 
 This library written in C allows accesing the container struct of the provided data.
 
