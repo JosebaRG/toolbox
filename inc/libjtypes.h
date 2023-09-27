@@ -10,6 +10,8 @@
 #ifndef _LIBJTYPES_H
 #define _LIBJTYPES_H
 
+#include <stdbool.h>
+
 typedef signed char 		  int8_t;
 typedef unsigned char 		 uint8_t;
 typedef signed short int 	 int16_t;
