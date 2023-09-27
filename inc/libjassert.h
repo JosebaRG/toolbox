@@ -1,5 +1,5 @@
 /**
- * @file libassert.h
+ * @file libjassert.h
  *
  * @brief Collection of functions to check the integrity of parameters.
  *
@@ -13,8 +13,8 @@
  *         joseba.rg@protonmail.com
  */
 
-#ifndef _LIBASSERT_H
-#define _LIBASSERT_H
+#ifndef _LIBJASSERT_H
+#define _LIBJASSERT_H
 
 #include <stdio.h>
 
@@ -22,10 +22,10 @@
  *                                   DEFINITIONS
  *********************************************************************************/
 
-//#define LIBASSERT_ASSERT
-//#define LIBASSERT_LOOP
+//#define LIBJASSERT_ASSERT
+//#define LIBJASSERT_LOOP
 
-#define LIBASSERT_MAX_LINE 100
+#define LIBJASSERT_MAX_LINE 100
 /**
  * sprintf (msg, "%s %s - %20s : %25s : %4d", __DATE__,__TIME__, __FILE__, __func__, __LINE__); \
  * __DATE__ 11 chars
@@ -38,7 +38,7 @@
  */
 
 /**
- * @def LIBASSERT_PTR
+ * @def LIBJASSERT_PTR
  * 
  * @brief Macro to check the integrity of a pointer.
  *
@@ -47,7 +47,7 @@
  * 
  * @param[in] ptr A pointer to be checked.
  */
-#define LIBASSERT_PTR(ptr) \
+#define LIBJASSERT_PTR(ptr) \
     do \
 	{ \
 		if (ptr == NULL) \
@@ -55,7 +55,7 @@
 			char msg [100]; \
 			sprintf (msg, "%s %s - %s(%d):%s - POINTER ASSERT ERROR", __DATE__,__TIME__, __FILE__, __LINE__, __func__); \
 			printf ("\n%s", msg); \
-			libassert_assert (); \
+			libjassert_assert (); \
 		} \
     } while (0)
 
@@ -68,13 +68,13 @@
  *
  * This function checks if certain macros are defined and performs an action accordingly.
  *
- * If the macro LIBASSERT_ASSERT is defined, it calls the assert function, which will
+ * If the macro LIBJASSERT_ASSERT is defined, it calls the assert function, which will
  * cause the program to terminate with an error message.
  *
- * If the macro LIBASSERT_LOOP is defined, it enters an infinite loop using a do-while.
+ * If the macro LIBJASSERT_LOOP is defined, it enters an infinite loop using a do-while.
  * 
  * @note SHOULD NOT be called directly. Its purpose is to be called from macros.
  */
-void libassert_assert ();
+void libjassert_assert ();
 
-#endif //_LIBASSERT_H
+#endif //_LIBJASSERT_H
