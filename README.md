@@ -18,14 +18,14 @@ $ git clone git@github.com:JosebaRG/toolbox.git
 
 ## 2.- Libraries
 
-### 2.1.- LibString
+### 2.1.- LibJString
 
 This library written in C was created to simplify working with strings in C. The implemented functions aim to provide similar functionality to that obtained in LabVIEW.
 
 Library can be included in C with:
 
 ```c
-#include "libstring.h"
+#include "libjstring.h"
 ```
 
 ### 2.2.- LibJXml
@@ -38,54 +38,54 @@ Library can be included in C with:
 #include "libjxml.h"
 ```
 
-### 2.3.- LibQueue
+### 2.3.- LibJQueue
 
 This library written in C provides tools to manage queues of different types like: circular, FiFo and LiFo.
 
 Library can be included in C with:
 
 ```c
-#include "libqueue.h"
+#include "libjqueue.h"
 ```
 
-### 2.4.- LibLog
+### 2.4.- LibJLog
 
 This library written in C gives an easy way to manage system logs.
 
 Library can be included in C with:
 
 ```c
-#include "liblog.h"
+#include "libjlog.h"
 ```
 
-### 2.5.- LibAssert
+### 2.5.- LibJAssert
 
 This library written in C provides a collection of functions that use the assert() macro to check the integrity of their input parameters. By including this library in one project, it can easily incorporate parameter checking into the code without having to write your specific custom error-checking code.
 
 Library can be included in C with:
 
 ```c
-#include "libassert.h"
+#include "libjassert.h"
 ```
 
-### 2.6.- LibTypes
+### 2.6.- LibJTypes
 
 This library written in C defines the data types in a more visual format.
 
 Library can be included in C with:
 
 ```c
-#include "libtypes.h"
+#include "libjtypes.h"
 ```
 
-### 2.6.- LibContainer
+### 2.7.- LibJContainer
 
 This library written in C allows accesing the container struct of the provided data.
 
 Library can be included in C with:
 
 ```c
-#include "libcontainer.h"
+#include "libjcontainer.h"
 ```
 
 ---

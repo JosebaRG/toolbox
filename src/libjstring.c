@@ -1,5 +1,5 @@
 /**
- * @file libstring.c
+ * @file libjstring.c
  *
  * @brief Library to work with strings.
  *
@@ -11,9 +11,9 @@
  *         joseba.rg@protonmail.com
  */
 
-#include "libstring.h"
+#include "libjstring.h"
 
-long libstring_length (char * text)
+long libjstring_length (char * text)
 {
 	long length = 0;
 
@@ -23,10 +23,10 @@ long libstring_length (char * text)
 	return length;
 }
 
-long libstring_concat (char * text_a, char * text_b)
+long libjstring_concat (char * text_a, char * text_b)
 {
-	long length_a = libstring_length (text_a);
-	long length_b = libstring_length (text_b);
+	long length_a = libjstring_length (text_a);
+	long length_b = libjstring_length (text_b);
 	long pos = 0;
 
 	while (length_b >= 0)
@@ -40,7 +40,7 @@ long libstring_concat (char * text_a, char * text_b)
 	return pos - 1;
 }
 
-long libstring_subset (char * text, long offset, long length, char * subset)
+long libjstring_subset (char * text, long offset, long length, char * subset)
 {
 	long copied = 0;
 
@@ -55,10 +55,10 @@ long libstring_subset (char * text, long offset, long length, char * subset)
 	return copied;
 }
 
-long libstring_replace (char * text, long offset, char * replace)
+long libjstring_replace (char * text, long offset, char * replace)
 {
 	long replaced = 0;
-	long length = libstring_length(replace);
+	long length = libjstring_length(replace);
 
 	if (length <= 0)
 		return 0;
@@ -72,10 +72,10 @@ long libstring_replace (char * text, long offset, char * replace)
 	return replaced;
 }
 
-int libstring_compare (char * a, char * b)
+int libjstring_compare (char * a, char * b)
 {
-	long length_a = libstring_length(a);
-	long length_b = libstring_length(b);
+	long length_a = libjstring_length(a);
+	long length_b = libjstring_length(b);
 
 	if (length_a != length_b)
 		return -1;
@@ -87,10 +87,10 @@ int libstring_compare (char * a, char * b)
 	return 0;
 }
 
-long libstring_search (char * text, long offset, char * searched)
+long libjstring_search (char * text, long offset, char * searched)
 {
-	long length_t = libstring_length(text + offset);
-	long length_s = libstring_length(searched);
+	long length_t = libjstring_length(text + offset);
+	long length_s = libjstring_length(searched);
 
 	if (length_s > length_t)
 		return -1;
@@ -107,7 +107,7 @@ long libstring_search (char * text, long offset, char * searched)
 
 	while (text [offset + position] != '\0')
 	{
-		libstring_subset(text, offset + position, length_s, ptr_aux);
+		libjstring_subset(text, offset + position, length_s, ptr_aux);
 		if (strcmp(ptr_aux, searched) == 0)
 		{
 			free (ptr_aux);
@@ -120,12 +120,12 @@ long libstring_search (char * text, long offset, char * searched)
 	return - 1;
 }
 
-match_pattern_t libstring_match_pattern (char * string, char * match)
+match_pattern_t libjstring_match_pattern (char * string, char * match)
 {
 	match_pattern_t matched_t;
 	
-	long length_s = libstring_length(string);
-	long length_m = libstring_length(match);
+	long length_s = libjstring_length(string);
+	long length_m = libjstring_length(match);
 
 	/*if (length_s > length_t)
 		return -1;*/
@@ -138,7 +138,7 @@ match_pattern_t libstring_match_pattern (char * string, char * match)
 	
 	while (string [position] != '\0')
 	{
-		libstring_subset(string, position, length_m, ptr_aux);
+		libjstring_subset(string, position, length_m, ptr_aux);
 		//printf("\n++ %s - %s", ptr_aux, searched);
 		if (strcmp(ptr_aux, match) == 0)
 			break;
@@ -150,15 +150,15 @@ match_pattern_t libstring_match_pattern (char * string, char * match)
 	matched_t.matched = (char *) malloc (length_m * sizeof (char));
 	matched_t.after = (char *) malloc ((length_s - (position + length_m)) * sizeof (char));
 
-	libstring_subset(string, 0, position , matched_t.before);
-	libstring_subset(string, position, length_m, matched_t.matched);
-	libstring_subset(string, position + length_m, length_s - (position + length_m), matched_t.after);
+	libjstring_subset(string, 0, position , matched_t.before);
+	libjstring_subset(string, position, length_m, matched_t.matched);
+	libjstring_subset(string, position + length_m, length_s - (position + length_m), matched_t.after);
 	matched_t.offset = position;
 
 	return matched_t;
 }
 
-match_pattern_t libstring_free_matched (match_pattern_t matched_t)
+match_pattern_t libjstring_free_matched (match_pattern_t matched_t)
 {
 	free(matched_t.before);
 	free(matched_t.matched);
@@ -184,7 +184,7 @@ void main()
 
 	printf("\n%s", texto);
 	
-	largo = libstring_length(ptr);
+	largo = libjstring_length(ptr);
 	printf("\nLength --> %s - %ld", ptr, largo);
 
 	///////////////////////////////
@@ -199,7 +199,7 @@ void main()
 
 	long cantidad = 0;
 
-	cantidad = libstring_concat(p_A, p_B);
+	cantidad = libjstring_concat(p_A, p_B);
 
 	printf("\nConcat --> %s - %ld", p_A, cantidad);
 
@@ -213,7 +213,7 @@ void main()
 
 	long ret_sub = 0;
 
-	ret_sub = libstring_subset(ptr,3,5,p_s);
+	ret_sub = libjstring_subset(ptr,3,5,p_s);
 
 	printf("\nSubset --> %s - %ld", p_s, ret_sub);
 
@@ -229,7 +229,7 @@ void main()
 
 	cantidad = 0;
 
-	cantidad = libstring_replace(pr_A, pr_B, 3);
+	cantidad = libjstring_replace(pr_A, pr_B, 3);
 
 	printf("\nReplace -> %s - %ld", pr_A, cantidad);
 
@@ -248,7 +248,7 @@ void main()
 	strcpy(pr_A,"12345678");
 	strcpy(pr_B,"34");
 
-	matched_t = libstring_match_pattern(pr_A, pr_B);
+	matched_t = libjstring_match_pattern(pr_A, pr_B);
 
 	printf("\nMatch p -> %s", matched_t.before);
 	printf("\nMatch p -> %s", matched_t.matched);

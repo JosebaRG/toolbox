@@ -1,5 +1,5 @@
 /**
- * @file libtypes.h
+ * @file libjtypes.h
  *
  * @brief Library to define data types.
  * 
@@ -7,8 +7,10 @@
  *         joseba.rg@protonmail.com
  */
 
-#ifndef _LIBTYPES_H
-#define _LIBTYPES_H
+#ifndef _LIBJTYPES_H
+#define _LIBJTYPES_H
+
+#include <stdbool.h>
 
 typedef signed char 		  int8_t;
 typedef unsigned char 		 uint8_t;
@@ -19,4 +21,4 @@ typedef unsigned int 		uint32_t;
 typedef signed long int 	 int64_t;
 typedef unsigned long int 	uint64_t;
 
-#endif //_LIBTYPES_H
+#endif //_LIBJTYPES_H

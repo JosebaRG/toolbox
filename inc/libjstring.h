@@ -1,5 +1,5 @@
 /**
- * @file libstring.h
+ * @file libjstring.h
  *
  * @brief Library to work with strings.
  *
@@ -11,8 +11,8 @@
  *         joseba.rg@protonmail.com
  */
 
-#ifndef _LIBSTRING_H
-#define _LIBSTRING_H
+#ifndef _LIBJSTRING_H
+#define _LIBJSTRING_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +49,7 @@ typedef struct{
  *
  * @return The length of the input string.
  */
-long libstring_length (char * text);
+long libjstring_length (char * text);
 
 /**
  * @brief Concatenates two strings.
@@ -62,7 +62,7 @@ long libstring_length (char * text);
  * 
  * @return The length of the concatenated string.
  */
-long libstring_concat (char * text_a, char * text_b);
+long libjstring_concat (char * text_a, char * text_b);
 
 /**
  * @brief Extracts a substring from string.
@@ -77,7 +77,7 @@ long libstring_concat (char * text_a, char * text_b);
  *
  * @return The number of characters copied into the subset.
  */
-long libstring_subset (char * text, long offset, long length, char * subset);
+long libjstring_subset (char * text, long offset, long length, char * subset);
 
 /**
  * @brief Replaces a substring in a string at a given offset with a new substring.
@@ -93,7 +93,7 @@ long libstring_subset (char * text, long offset, long length, char * subset);
  * 
  * @return The number of characters replaced in the string.
  */
-long libstring_replace (char * text, long offset, char * replace);
+long libjstring_replace (char * text, long offset, char * replace);
 
 /**
  * @brief Compare two strings and returns whether they are equal or not.
@@ -107,7 +107,7 @@ long libstring_replace (char * text, long offset, char * replace);
  *
  * @return 0 if the strings are equal, -1 otherwise.
  */
-int libstring_compare (char * a, char * b);
+int libjstring_compare (char * a, char * b);
 
 /**
  * @brief Searches for a substring within a given string starting at a specified offset.
@@ -119,7 +119,7 @@ int libstring_compare (char * a, char * b);
  * @return If found, returns the position of the substring within the input string
  * starting from the given offset, else -1.
  */
-long libstring_search (char * text, long offset, char * searched);
+long libjstring_search (char * text, long offset, char * searched);
 
 /**
  * @brief Finds the first occurrence of a substring in a string and returns a
@@ -132,7 +132,7 @@ long libstring_search (char * text, long offset, char * searched);
  * including the portion of the string before and after the match, the match itself,
  * and the offset of the match.
  */
-match_pattern_t libstring_match_pattern (char * string, char * match);
+match_pattern_t libjstring_match_pattern (char * string, char * match);
 
 /**
  * @brief Frees the memory used by a match_pattern_t struct.
@@ -145,6 +145,6 @@ match_pattern_t libstring_match_pattern (char * string, char * match);
  *
  * @return The match_pattern_t struct with its members set to NULL.
  */
-match_pattern_t libstring_free_matched (match_pattern_t matched_t);
+match_pattern_t libjstring_free_matched (match_pattern_t matched_t);
 
-#endif //_LIBSTRING_H
+#endif //_LIBJSTRING_H

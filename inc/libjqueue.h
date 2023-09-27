@@ -1,5 +1,5 @@
 /**
- * @file libqueue.h
+ * @file libjqueue.h
  *
  * @brief Library to work with queues.
  *
@@ -14,10 +14,10 @@
  *         joseba.rg@protonmail.com
  */
 
-#ifndef _LIBQUEUE_H
-#define _LIBQUEUE_H
+#ifndef _LIBJQUEUE_H
+#define _LIBJQUEUE_H
 
-#include "libtypes.h"
+#include "libjtypes.h"
 
 /*********************************************************************************
  *    Graphical representation of the nodes in the library.
@@ -76,34 +76,34 @@ struct Queue_t
  *                                      API
  *********************************************************************************/
 
-Queue_t * libqueue_create_queue (QType type);
-uint32_t libqueue_delete_queue (Queue_t * queue);
-uint32_t libqueue_count_nodes (Queue_t * queue);
+Queue_t * libjqueue_create_queue (QType type);
+uint32_t libjqueue_delete_queue (Queue_t * queue);
+uint32_t libjqueue_count_nodes (Queue_t * queue);
 
-QNode_t * libqueue_add_node (Queue_t * queue, void * data);
-QNode_t * libqueue_add_node_first (Queue_t * queue, void * data);
-QNode_t * libqueue_add_node_last (Queue_t * queue, void * data);
-QNode_t * libqueue_add_node_before (QNode_t * ref_node, void * data);
-QNode_t * libqueue_add_node_after (QNode_t * ref_node, void * data);
+QNode_t * libjqueue_add_node (Queue_t * queue, void * data);
+QNode_t * libjqueue_add_node_first (Queue_t * queue, void * data);
+QNode_t * libjqueue_add_node_last (Queue_t * queue, void * data);
+QNode_t * libjqueue_add_node_before (QNode_t * ref_node, void * data);
+QNode_t * libjqueue_add_node_after (QNode_t * ref_node, void * data);
 
-QNode_t * libqueue_get_node (Queue_t * queue);
-QNode_t * libqueue_get_node_first (Queue_t * queue);
-QNode_t * libqueue_get_node_last (Queue_t * queue);
-QNode_t * libqueue_get_node_before (QNode_t * ref_node);
-QNode_t * libqueue_get_node_after (QNode_t * ref_node);
+QNode_t * libjqueue_get_node (Queue_t * queue);
+QNode_t * libjqueue_get_node_first (Queue_t * queue);
+QNode_t * libjqueue_get_node_last (Queue_t * queue);
+QNode_t * libjqueue_get_node_before (QNode_t * ref_node);
+QNode_t * libjqueue_get_node_after (QNode_t * ref_node);
 
-void * libqueue_get_data (Queue_t * queue);
-void * libqueue_get_data_first (Queue_t * queue);
-void * libqueue_get_data_last (Queue_t * queue);
-void * libqueue_get_data_before (QNode_t * ref_node);
-void * libqueue_get_data_after (QNode_t * ref_node);
+void * libjqueue_get_data (Queue_t * queue);
+void * libjqueue_get_data_first (Queue_t * queue);
+void * libjqueue_get_data_last (Queue_t * queue);
+void * libjqueue_get_data_before (QNode_t * ref_node);
+void * libjqueue_get_data_after (QNode_t * ref_node);
 
-void * libqueue_remove_node (Queue_t * queue);
-void * libqueue_remove_node_first (Queue_t * queue);
-void * libqueue_remove_node_last (Queue_t * queue);
-void * libqueue_remove_node_before (QNode_t * ref_node);
-void * libqueue_remove_node_after (QNode_t * ref_node);
+void * libjqueue_remove_node (Queue_t * queue);
+void * libjqueue_remove_node_first (Queue_t * queue);
+void * libjqueue_remove_node_last (Queue_t * queue);
+void * libjqueue_remove_node_before (QNode_t * ref_node);
+void * libjqueue_remove_node_after (QNode_t * ref_node);
 
-void libqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b);
+void libjqueue_swap_node (QNode_t * ref_node_a, QNode_t * ref_node_b);
 
-#endif //_LIBQUEUE_H
+#endif //_LIBJQUEUE_H
